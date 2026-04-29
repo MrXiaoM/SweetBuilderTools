@@ -1,0 +1,24 @@
+# 是否启用该配置
+enable: false
+# 需要什么权限才能使用这个工具？设为 none 无需权限
+permission: none
+
+# 放置方块配置
+place-blocks:
+  # 默认方块
+  default: STONE
+  # 是否禁止挖掘方块后掉落物品
+  disable-drops: true
+  # 可以选择的方块列表
+  list:
+  - STONE
+
+# 方块数量，infinite 代表无限制
+amount: 512
+
+# 物品配置
+item:
+  material: PAPER
+  display: '&e浓缩石头'
+  lore:
+    - '&7剩余数量: &f%current_amount% / %max_amount%'

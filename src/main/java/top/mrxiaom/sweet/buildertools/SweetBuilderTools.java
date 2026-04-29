@@ -1,7 +1,10 @@
 package top.mrxiaom.sweet.buildertools;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
+import top.mrxiaom.pluginbase.api.IRegistry;
+import top.mrxiaom.pluginbase.data.SimpleRegistry;
 import top.mrxiaom.pluginbase.paper.PaperFactory;
 import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
@@ -16,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.sweet.buildertools.api.IMaterial;
 
 public class SweetBuilderTools extends BukkitPlugin {
     public static SweetBuilderTools getInstance() {
@@ -71,6 +75,26 @@ public class SweetBuilderTools extends BukkitPlugin {
         MinecraftVersion.disableUpdateCheck();
         MinecraftVersion.disableBStats();
         MinecraftVersion.getVersion();
+    }
+
+    private final IRegistry<IMaterial.Provider> materialRegistry = new SimpleRegistry<>();
+
+    public IRegistry<IMaterial.Provider> materialRegistry() {
+        return materialRegistry;
+    }
+
+    @Nullable
+    public IMaterial parseMaterial(@Nullable String str) {
+        if (str == null) {
+            return null;
+        }
+        for (IMaterial.Provider provider : materialRegistry.all()) {
+            IMaterial material = provider.parse(str);
+            if (material != null) {
+                return material;
+            }
+        }
+        return null;
     }
 
     @Override
