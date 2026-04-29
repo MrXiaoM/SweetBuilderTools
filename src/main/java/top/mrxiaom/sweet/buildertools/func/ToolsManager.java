@@ -1,8 +1,11 @@
 package top.mrxiaom.sweet.buildertools.func;
 
 import com.google.common.collect.Lists;
+import de.tr7zw.changeme.nbtapi.NBT;
+import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +69,16 @@ public class ToolsManager extends AbstractModule {
     @Nullable
     public ToolConfig get(String id) {
         return tools.get(id);
+    }
+
+    @Nullable
+    public ToolConfig get(@Nullable ItemStack item) {
+        if (item == null || item.getAmount() < 1 || item.getType().equals(Material.AIR)) {
+            return null;
+        }
+        return NBT.get(item, nbt -> {
+            return get(nbt.getString(ToolConfig.KEY_ID));
+        });
     }
 
     public static ToolsManager inst() {

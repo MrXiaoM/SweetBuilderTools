@@ -20,12 +20,14 @@ public class ToolConfig {
     public static final String KEY_PLAYER = "SWEET_BUILDER_TOOLS_PLAYER";
     public static final String KEY_AMOUNT = "SWEET_BUILDER_TOOLS_AMOUNT";
     public static final String KEY_CURRENT = "SWEET_BUILDER_TOOLS_CURRENT";
+    public static final String BLOCK_ID = "SBT_ID";
     private final @NotNull String id;
     private final boolean enable;
     private final @Nullable String permission;
     private final @NotNull IMaterial placeDefault;
     private final boolean placeDisableDrops;
     private final @NotNull List<IMaterial> placeList;
+    private final @NotNull Map<String, IMaterial> placeListByKey;
     private final @Nullable Integer amount;
     private final @NotNull LoadedIcon item;
 
@@ -51,6 +53,10 @@ public class ToolConfig {
                 throw new IllegalArgumentException("place-blocks.list 的值 " + str + " 无效");
             }
             this.placeList.add(material);
+        }
+        this.placeListByKey = new HashMap<>();
+        for (IMaterial material : placeList) {
+            this.placeListByKey.put(material.key(), material);
         }
         String amountStr = config.getString("amount");
         if ("infinite".equals(amountStr)) {
@@ -93,6 +99,10 @@ public class ToolConfig {
         return placeList;
     }
 
+    public @NotNull Map<String, IMaterial> placeListByKey() {
+        return placeListByKey;
+    }
+
     public @Nullable Integer amount() {
         return amount;
     }
@@ -111,6 +121,25 @@ public class ToolConfig {
             nbt.setInteger(KEY_AMOUNT, 0);
         });
         return item;
+    }
+
+    @Nullable
+    public IMaterial getMaterial(@NotNull ItemStack item) {
+        return NBT.get(item, nbt -> {
+            return placeListByKey().get(nbt.getString(KEY_CURRENT));
+        });
+    }
+
+    public static int getAmount(@NotNull ItemStack item) {
+        return NBT.get(item, nbt -> {
+            return nbt.getInteger(KEY_AMOUNT);
+        });
+    }
+
+    public static void setAmount(@NotNull ItemStack item, int amount) {
+        NBT.modify(item, nbt -> {
+            nbt.setInteger(KEY_AMOUNT, amount);
+        });
     }
 
     @NotNull
