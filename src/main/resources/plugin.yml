@@ -1,0 +1,14 @@
+name: SweetBuilderTools
+version: '${version}'
+main: top.mrxiaom.sweet.buildertools.SweetBuilderTools
+api-version: 1.13
+depend: []
+softdepend: 
+  - PlaceholderAPI
+authors: [ MrXiaoM ]
+folia-supported: true
+# PluginBase Libraries ${libraries_config}
+commands:
+  sweetbuildertools:
+    description: 'The main command of SweetBuilderTools'
+    aliases: [ sbuildertools, sbuildertool, buildertools, buildertool, sbt, bt ]
