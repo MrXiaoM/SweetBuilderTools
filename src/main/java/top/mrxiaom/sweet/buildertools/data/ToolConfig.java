@@ -1,6 +1,9 @@
 package top.mrxiaom.sweet.buildertools.data;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,10 +12,14 @@ import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ToolConfig {
+    public static final String KEY_ID = "SWEET_BUILDER_TOOLS_ID";
+    public static final String KEY_UNIQUE = "SWEET_BUILDER_TOOLS_UNIQUE";
+    public static final String KEY_PLAYER = "SWEET_BUILDER_TOOLS_PLAYER";
+    public static final String KEY_AMOUNT = "SWEET_BUILDER_TOOLS_AMOUNT";
+    public static final String KEY_CURRENT = "SWEET_BUILDER_TOOLS_CURRENT";
     private final @NotNull String id;
     private final boolean enable;
     private final @Nullable String permission;
@@ -91,6 +98,18 @@ public class ToolConfig {
     }
 
     public @NotNull LoadedIcon item() {
+        return item;
+    }
+
+    public ItemStack createItem(Player player) {
+        ItemStack item = item().generateIcon(player);
+        NBT.modify(item, nbt -> {
+            nbt.setString(KEY_ID, id());
+            nbt.setString(KEY_UNIQUE, UUID.randomUUID().toString());
+            nbt.setString(KEY_PLAYER, player.getUniqueId().toString());
+            nbt.setString(KEY_CURRENT, placeDefault().key());
+            nbt.setInteger(KEY_AMOUNT, 0);
+        });
         return item;
     }
 
