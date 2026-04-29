@@ -40,6 +40,11 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
         }
 
         @Override
+        public @NotNull String key() {
+            return String.valueOf(material);
+        }
+
+        @Override
         public @NotNull ItemStack getIcon(@NotNull Player player) {
             return new ItemStack(material);
         }

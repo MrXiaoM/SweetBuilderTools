@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.api.WithPriority;
 
 public interface IMaterial {
+    @NotNull String key();
     @NotNull ItemStack getIcon(@NotNull Player player);
     void placeBlock(@NotNull Player player, @NotNull Block block);
     interface Provider extends WithPriority {
