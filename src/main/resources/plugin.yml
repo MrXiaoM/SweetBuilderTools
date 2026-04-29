@@ -1,7 +1,7 @@
 name: SweetBuilderTools
 version: '${version}'
 main: top.mrxiaom.sweet.buildertools.SweetBuilderTools
-api-version: 1.13
+api-version: 1.14
 depend: []
 softdepend: 
   - PlaceholderAPI

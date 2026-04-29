@@ -91,7 +91,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             material.placeBlock(player, block);
 
             BlockState state = block.getState();
-            NBT.modify(state, nbt -> {
+            NBT.modifyPersistentData(state, nbt -> {
                 nbt.setString(ToolConfig.BLOCK_ID, tool.id());
             });
             state.update();
@@ -101,7 +101,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     @EventHandler
     public void onBlockDrop(BlockDropItemEvent e) {
         if (e.isCancelled()) return;
-        ToolConfig tool = NBT.get(e.getBlockState(), nbt -> {
+        ToolConfig tool = NBT.getPersistentData(e.getBlockState(), nbt -> {
             String id = nbt.getString(ToolConfig.BLOCK_ID);
             if (id.isEmpty()) {
                 return null;
