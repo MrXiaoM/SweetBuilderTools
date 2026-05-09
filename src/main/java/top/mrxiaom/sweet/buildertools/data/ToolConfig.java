@@ -157,6 +157,14 @@ public class ToolConfig {
         NBT.modify(item, nbt -> {
             nbt.setInteger(KEY_AMOUNT, amount);
         });
+        refreshItem(item, player, amount);
+    }
+
+    public void refreshItem(ItemStack item, Player player) {
+        refreshItem(item, player, getAmount(item));
+    }
+
+    public void refreshItem(ItemStack item, Player player, int amount) {
         ListPair<String, Object> r = new ListPair<>();
         addAmountReplacements(r, amount);
         IMaterial material = getMaterial(item);

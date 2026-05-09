@@ -174,6 +174,7 @@ public class GuiSelect extends AbstractGuiModule {
                     NBT.modify(item, nbt -> {
                         nbt.setString(ToolConfig.KEY_CURRENT, material.key());
                     });
+                    tool.refreshItem(item, player);
                     selectedBlock = material;
                     plugin.getScheduler().runTask(this::open);
                 }
