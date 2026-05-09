@@ -11,7 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -104,16 +106,19 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     }
 
     @EventHandler
-    public void onOpenSelectGui(PlayerDropItemEvent e) {
+    public void onOpenSelectGui(InventoryClickEvent e) {
         if (e.isCancelled()) return;
-        Player player = e.getPlayer();
-        if (player.isSneaking()) {
-            ItemStack item = e.getItemDrop().getItemStack();
-            ToolConfig tool = ToolsManager.inst().get(item);
-            if (tool == null) return;
-            e.setCancelled(true);
-            if (GuiManager.inst().getOpeningGui(player) != null) return;
-            GuiSelect.create(player, tool, item).open();
+        if (!(e.getWhoClicked() instanceof Player)) return;
+        if (e.getView().getType().equals(InventoryType.CRAFTING)) {
+            Player player = (Player) e.getWhoClicked();
+            if (e.getAction().equals(InventoryAction.PICKUP_HALF)) {
+                ItemStack item = e.getCurrentItem();
+                ToolConfig tool = ToolsManager.inst().get(item);
+                if (tool == null) return;
+                e.setCancelled(true);
+                if (GuiManager.inst().getOpeningGui(player) != null) return;
+                plugin.getScheduler().runTask(() -> GuiSelect.create(player, tool, item).open());
+            }
         }
     }
 }
