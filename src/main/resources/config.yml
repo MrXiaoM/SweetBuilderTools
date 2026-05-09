@@ -1,4 +1,5 @@
+# 是否开启调试模式
+debug: false
 
 tools-folder: './tools'
-
 gui-folder: './gui'

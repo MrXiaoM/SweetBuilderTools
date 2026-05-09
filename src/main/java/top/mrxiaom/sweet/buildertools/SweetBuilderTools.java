@@ -1,6 +1,7 @@
 package top.mrxiaom.sweet.buildertools;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.api.IRegistry;
@@ -36,7 +37,7 @@ public class SweetBuilderTools extends BukkitPlugin {
         this.scheduler = new FoliaLibScheduler(this);
 
         try {
-            //noinspection ResultOfMethodCallIgnored
+            //noinspection ResultOfMethodCallIgnored, deprecation
             getDescription().getLibraries();
         } catch (LinkageError ignored) {
             info("正在检查依赖库状态");
@@ -57,6 +58,11 @@ public class SweetBuilderTools extends BukkitPlugin {
                 this.classLoader.addURL(library);
             }
         }
+    }
+
+    private boolean debug = false;
+    public boolean debug() {
+        return debug;
     }
 
     @Override
@@ -95,6 +101,11 @@ public class SweetBuilderTools extends BukkitPlugin {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void beforeReloadConfig(FileConfiguration config) {
+        debug = config.getBoolean("debug", false);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 return;
             }
 
-            BlockPlaceEvent event = new FakeBlockPlaceEvent(block, previousState, clickedBlock, item, player, canBuild, tool, material);
+            BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, previousState, clickedBlock, item, player, canBuild, tool, material);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 // 如果其它插件阻止了方块放置，则恢复原方块
