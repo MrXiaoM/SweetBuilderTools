@@ -53,6 +53,7 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
         }
 
         @Override
+        @SuppressWarnings({"removal"})
         public @NotNull String getDisplayName(@NotNull Player player) {
             try {
                 // Paper Adventure 方法
@@ -60,7 +61,7 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
             } catch (LinkageError ignored) {
             }
             try {
-                // noinspection removal Spigot 1.19+ 方法
+                // Spigot 1.19+ 方法
                 return "<translate:" + material.getTranslationKey() + ">";
             } catch (LinkageError ignored) {
             }
