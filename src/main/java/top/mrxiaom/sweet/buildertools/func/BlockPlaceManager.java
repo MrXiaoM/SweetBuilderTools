@@ -13,14 +13,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 import top.mrxiaom.sweet.buildertools.event.FakeBlockPlaceEvent;
+import top.mrxiaom.sweet.buildertools.gui.GuiSelect;
 
 @AutoRegister
 public class BlockPlaceManager extends AbstractModule implements Listener {
@@ -121,6 +124,20 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         });
         if (tool != null && tool.placeDisableDrops()) {
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onOpenSelectGui(PlayerDropItemEvent e) {
+        if (e.isCancelled()) return;
+        Player player = e.getPlayer();
+        if (player.isSneaking()) {
+            ItemStack item = e.getItemDrop().getItemStack();
+            ToolConfig tool = ToolsManager.inst().get(item);
+            if (tool == null) return;
+            e.setCancelled(true);
+            if (GuiManager.inst().getOpeningGui(player) != null) return;
+            GuiSelect.create(player, tool, item).open();
         }
     }
 }

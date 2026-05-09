@@ -1,2 +1,4 @@
 
 tools-folder: './tools'
+
+gui-folder: './gui'

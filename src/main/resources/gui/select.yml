@@ -1,0 +1,27 @@
+title: '选择方块'
+inventory:
+  - '框框框框框框框框框'
+  - '框方方方方方方方框'
+  - '框方方方方方方方框'
+  - '上框框框框框框框下'
+main-icons:
+  方:
+    lore:
+      - old lore
+      - selected flag
+    selected:
+      - ''
+      - '&a&l已选中'
+    not-selected:
+      - ''
+      - '&a左键&7 | &f选择这个方块'
+  上:
+    material: ARROW
+    display: '&e&l上一页'
+  下:
+    material: ARROW
+    display: '&e&l下一页'
+other-icons:
+  框:
+    material: WHITE_STAINED_GLASS_PANE
+    display: '&f'
