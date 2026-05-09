@@ -35,6 +35,7 @@ dependencies {
     compileOnly(base.depend.annotations)
 
     compileOnly("me.clip:placeholderapi:2.12.2")
+    compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
     base.library(LibraryHelper.adventure("4.22.0"))
     implementation(base.depend.nbtapi)

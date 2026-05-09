@@ -128,6 +128,7 @@ public class ToolConfig {
     public ItemStack createItem(Player player, int amount) {
         ListPair<String, Object> r = new ListPair<>();
         addAmountReplacements(r, amount);
+        r.add("%material%", placeDefault().getDisplayName(player));
         ItemStack item = item().generateIcon(player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
         NBT.modify(item, nbt -> {
             nbt.setString(KEY_ID, id());
@@ -158,6 +159,12 @@ public class ToolConfig {
         });
         ListPair<String, Object> r = new ListPair<>();
         addAmountReplacements(r, amount);
+        IMaterial material = getMaterial(item);
+        if (material != null) {
+            r.add("%material%", material.getDisplayName(player));
+        } else {
+            r.add("%material%", Messages.Item.unknown_material.str());
+        }
         item().applyItemMeta(item, player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
     }
 

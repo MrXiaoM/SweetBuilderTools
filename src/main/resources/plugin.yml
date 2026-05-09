@@ -5,6 +5,7 @@ api-version: 1.14
 depend: []
 softdepend: 
   - PlaceholderAPI
+  - LangUtils
 authors: [ MrXiaoM ]
 folia-supported: true
 # PluginBase Libraries ${libraries_config}

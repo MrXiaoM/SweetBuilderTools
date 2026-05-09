@@ -15,6 +15,11 @@ public interface IMaterial {
     @NotNull String key();
 
     /**
+     * 获取方块显示名称，支持 MiniMessage
+     */
+    @NotNull String getDisplayName(@NotNull Player player);
+
+    /**
      * 获取方块图标，用于在界面显示
      */
     @NotNull ItemStack getIcon(@NotNull Player player);

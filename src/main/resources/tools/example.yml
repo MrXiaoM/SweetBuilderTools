@@ -12,6 +12,12 @@ place-blocks:
   # 可以选择的方块列表
   list:
   - STONE
+  - DEEPSLATE
+  - GRANITE
+  - DIORITE
+  - ANDESITE
+  - CALCITE
+  - TUFF
 
 # 方块数量，infinite 代表无限制
 amount: 512
@@ -19,6 +25,6 @@ amount: 512
 # 物品配置
 item:
   material: PAPER
-  display: '&e浓缩石头'
+  display: '&e废石包 - %material%'
   lore:
     - '&7剩余数量: &f%current_amount% / %max_amount%'

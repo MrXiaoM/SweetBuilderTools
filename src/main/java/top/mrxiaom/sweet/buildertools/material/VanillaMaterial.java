@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.buildertools.material;
 
-import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.SoundGroup;
@@ -13,10 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.CollectionUtils;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
 import top.mrxiaom.sweet.buildertools.func.AbstractModule;
+
+import java.util.StringJoiner;
 
 @AutoRegister(priority = 990)
 public class VanillaMaterial extends AbstractModule implements IMaterial.Provider {
@@ -48,6 +50,32 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
         @Override
         public @NotNull String key() {
             return String.valueOf(material);
+        }
+
+        @Override
+        public @NotNull String getDisplayName(@NotNull Player player) {
+            try {
+                // Paper Adventure 方法
+                return "<translate:" + material.translationKey() + ">";
+            } catch (LinkageError ignored) {
+            }
+            try {
+                // noinspection removal Spigot 1.19+ 方法
+                return "<translate:" + material.getTranslationKey() + ">";
+            } catch (LinkageError ignored) {
+            }
+            try {
+                // LangUtils 1.7-1.18
+                return com.meowj.langutils.lang.LanguageHelper.getItemName(new ItemStack(material), player);
+            } catch (LinkageError ignored) {
+            }
+            // 最坏的情况下，将 material 格式化为每个单次首字母大写
+            StringJoiner words = new StringJoiner(" ");
+            for (String word : CollectionUtils.split(String.valueOf(material), '_')) {
+                char upperCase = Character.toUpperCase(word.charAt(0));
+                words.add(upperCase + word.substring(1).toLowerCase());
+            }
+            return words.toString();
         }
 
         @Override

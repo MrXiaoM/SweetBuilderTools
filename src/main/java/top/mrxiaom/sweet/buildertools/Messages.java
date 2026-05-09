@@ -11,6 +11,7 @@ public class Messages {
     @Language(prefix = "messages.item.")
     public static class Item {
         public static final Message infinite = field("无限");
+        public static final Message unknown_material = field("未指定方块");
     }
 
     @Language(prefix = "messages.command.")
