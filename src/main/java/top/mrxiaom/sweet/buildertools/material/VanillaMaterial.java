@@ -1,10 +1,13 @@
 package top.mrxiaom.sweet.buildertools.material;
 
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.SoundGroup;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -78,19 +81,19 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
 
         @Override
         @SuppressWarnings("removal")
-        public void placeSound(@NotNull Block block) {
+        public void placeSound(@NotNull Block block, @NotNull Entity entity) {
             World world = block.getWorld();
             try {
                 // Paper 1.19+
                 SoundGroup group = block.getBlockSoundGroup();
-                world.playSound(block.getLocation(), group.getPlaceSound(), group.getVolume(), group.getPitch());
+                world.playSound(entity, group.getPlaceSound(), SoundCategory.BLOCKS, group.getVolume(), group.getPitch());
                 return;
             } catch (LinkageError ignored) {
             }
             try {
                 // Paper 1.15+
                 com.destroystokyo.paper.block.BlockSoundGroup group = block.getSoundGroup();
-                world.playSound(block.getLocation(), group.getPlaceSound(), 1.0f, 1.0f);
+                world.playSound(entity, group.getPlaceSound(), SoundCategory.BLOCKS, 1.0f, 1.0f);
             } catch (LinkageError ignored) {
             }
         }

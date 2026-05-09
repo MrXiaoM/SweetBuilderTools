@@ -97,7 +97,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 return;
             }
 
-            material.placeSound(block);
+            material.placeSound(block, player);
 
             tool.setAmount(item, player, currentAmount + 1);
         }

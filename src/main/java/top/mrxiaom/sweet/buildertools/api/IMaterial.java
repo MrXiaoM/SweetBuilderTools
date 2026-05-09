@@ -1,6 +1,7 @@
 package top.mrxiaom.sweet.buildertools.api;
 
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public interface IMaterial {
      * 播放放置方块音效
      * @param block 方块位置
      */
-    void placeSound(@NotNull Block block);
+    void placeSound(@NotNull Block block, @NotNull Entity entity);
 
     interface Provider extends WithPriority {
         @Nullable IMaterial parse(@NotNull String str);
