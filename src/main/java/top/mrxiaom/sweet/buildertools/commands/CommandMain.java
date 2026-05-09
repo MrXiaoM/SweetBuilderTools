@@ -49,7 +49,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 return Messages.Command.player__only.tm(sender);
             }
             // 给予玩家物品
-            ItemStack item = tool.createItem(target);
+            ItemStack item = tool.createItem(target, 0);
             ItemStackUtil.giveItemToPlayer(target, item);
             return Messages.Command.give__success.tm(sender,
                     Pair.of("%player%", target.getName()),
