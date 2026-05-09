@@ -26,6 +26,12 @@ public interface IMaterial {
      */
     boolean placeBlock(@NotNull Player player, @NotNull Block block);
 
+    /**
+     * 播放放置方块音效
+     * @param block 方块位置
+     */
+    void placeSound(@NotNull Block block);
+
     interface Provider extends WithPriority {
         @Nullable IMaterial parse(@NotNull String str);
     }

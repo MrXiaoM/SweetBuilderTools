@@ -1,6 +1,8 @@
 package top.mrxiaom.sweet.buildertools.material;
 
 import org.bukkit.Material;
+import org.bukkit.SoundGroup;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -72,6 +74,25 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
             // 1.8 - 1.12
             block.setType(material);
             return true;
+        }
+
+        @Override
+        @SuppressWarnings("removal")
+        public void placeSound(@NotNull Block block) {
+            World world = block.getWorld();
+            try {
+                // Paper 1.19+
+                SoundGroup group = block.getBlockSoundGroup();
+                world.playSound(block.getLocation(), group.getPlaceSound(), group.getVolume(), group.getPitch());
+                return;
+            } catch (LinkageError ignored) {
+            }
+            try {
+                // Paper 1.15+
+                com.destroystokyo.paper.block.BlockSoundGroup group = block.getSoundGroup();
+                world.playSound(block.getLocation(), group.getPlaceSound(), 1.0f, 1.0f);
+            } catch (LinkageError ignored) {
+            }
         }
     }
 }

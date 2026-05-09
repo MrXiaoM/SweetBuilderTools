@@ -96,6 +96,8 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 return;
             }
 
+            material.placeSound(block);
+
             ToolConfig.setAmount(item, currentAmount + 1);
 
             BlockState state = block.getState();
