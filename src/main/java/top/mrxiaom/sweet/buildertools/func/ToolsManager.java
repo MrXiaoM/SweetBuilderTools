@@ -67,8 +67,8 @@ public class ToolsManager extends AbstractModule {
     }
 
     @Nullable
-    public ToolConfig get(String id) {
-        return tools.get(id);
+    public ToolConfig get(@Nullable String id) {
+        return id == null ? null : tools.get(id);
     }
 
     @Nullable

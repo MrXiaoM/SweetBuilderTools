@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.buildertools.func;
 
-import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,7 +10,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -102,28 +100,6 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             material.placeSound(block);
 
             ToolConfig.setAmount(item, currentAmount + 1);
-
-            BlockState state = block.getState();
-            NBT.modifyPersistentData(state, nbt -> {
-                nbt.setString(ToolConfig.BLOCK_ID, tool.id());
-            });
-            state.update();
-        }
-    }
-
-    @EventHandler
-    public void onBlockDrop(BlockDropItemEvent e) {
-        if (e.isCancelled()) return;
-        ToolConfig tool = NBT.getPersistentData(e.getBlockState(), nbt -> {
-            String id = nbt.getString(ToolConfig.BLOCK_ID);
-            if (id.isEmpty()) {
-                return null;
-            } else {
-                return ToolsManager.inst().get(id);
-            }
-        });
-        if (tool != null && tool.placeDisableDrops()) {
-            e.setCancelled(true);
         }
     }
 
