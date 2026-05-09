@@ -7,6 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.actions.ActionProviders;
+import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.Pair;
@@ -24,6 +26,7 @@ public class ToolConfig {
     public static final String KEY_AMOUNT = "SWEET_BUILDER_TOOLS_AMOUNT";
     public static final String KEY_CURRENT = "SWEET_BUILDER_TOOLS_CURRENT";
     public static final String BLOCK_ID = "SBT_ID";
+    private final @NotNull SweetBuilderTools plugin;
     private final @NotNull String id;
     private final boolean enable;
     private final @Nullable String permission;
@@ -33,8 +36,10 @@ public class ToolConfig {
     private final @NotNull Map<String, IMaterial> placeListByKey;
     private final @Nullable Integer amount;
     private final @NotNull LoadedIcon item;
+    private final @NotNull List<IAction> eventPlaced;
 
     private ToolConfig(@NotNull SweetBuilderTools plugin, @NotNull String id, @NotNull ConfigurationSection config) {
+        this.plugin = plugin;
         this.id = id;
         this.enable = config.getBoolean("enable", false);
         String permission = config.getString("permission", "none");
@@ -72,6 +77,11 @@ public class ToolConfig {
             this.amount = amount;
         }
         this.item = LoadedIcon.load(config, "item");
+        this.eventPlaced = ActionProviders.loadActions(config, "events.placed");
+    }
+
+    public @NotNull SweetBuilderTools plugin() {
+        return plugin;
     }
 
     public @NotNull String id() {
@@ -112,6 +122,28 @@ public class ToolConfig {
 
     public @NotNull LoadedIcon item() {
         return item;
+    }
+
+    public @NotNull List<IAction> eventPlaced() {
+        return eventPlaced;
+    }
+
+    public void eventPlaced(Player player, List<Pair<String, Object>> r) {
+        ActionProviders.run(plugin, player, eventPlaced, r);
+    }
+
+    public void addReplacements(List<Pair<String, Object>> r, ItemStack item, Player player) {
+        addReplacements(r, item, player, getAmount(item));
+    }
+
+    public void addReplacements(List<Pair<String, Object>> r, ItemStack item, Player player, int amount) {
+        addAmountReplacements(r, amount);
+        IMaterial material = getMaterial(item);
+        if (material != null) {
+            r.add(Pair.of("%material%", material.getDisplayName(player)));
+        } else {
+            r.add(Pair.of("%material%", Messages.Item.unknown_material.str()));
+        }
     }
 
     public void addAmountReplacements(List<Pair<String, Object>> r, int amount) {
@@ -166,13 +198,7 @@ public class ToolConfig {
 
     public void refreshItem(ItemStack item, Player player, int amount) {
         ListPair<String, Object> r = new ListPair<>();
-        addAmountReplacements(r, amount);
-        IMaterial material = getMaterial(item);
-        if (material != null) {
-            r.add("%material%", material.getDisplayName(player));
-        } else {
-            r.add("%material%", Messages.Item.unknown_material.str());
-        }
+        addReplacements(r, item, player, amount);
         item().applyItemMeta(item, player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
     }
 

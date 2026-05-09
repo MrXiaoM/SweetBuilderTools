@@ -19,6 +19,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
+import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
@@ -101,7 +102,12 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
 
             material.placeSound(block, player);
 
-            tool.setAmount(item, player, currentAmount + 1);
+            int amount = currentAmount + 1;
+            tool.setAmount(item, player, amount);
+
+            ListPair<String, Object> r = new ListPair<>();
+            tool.addReplacements(r, item, player, amount);
+            tool.eventPlaced(player, r);
         }
     }
 

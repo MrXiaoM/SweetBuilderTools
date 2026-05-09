@@ -28,3 +28,8 @@ item:
   display: '&e废石包 - %material%'
   lore:
     - '&7剩余数量: &f%current_amount% / %max_amount%'
+
+# 事件执行操作
+events:
+  placed:
+    - '[actionbar]&e废石包 - %material%&r&7 | &f%current_amount% &7/ &f%max_amount%'
