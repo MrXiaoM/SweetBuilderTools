@@ -83,7 +83,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
 
             // TODO: 需要替换 FakeBlockPlaceEvent 的前两个参数为新的方块快照
-            BlockPlaceEvent event = new FakeBlockPlaceEvent(block, block.getState(), clickedBlock, item, player, canBuild);
+            BlockPlaceEvent event = new FakeBlockPlaceEvent(block, block.getState(), clickedBlock, item, player, canBuild, tool, material);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 
