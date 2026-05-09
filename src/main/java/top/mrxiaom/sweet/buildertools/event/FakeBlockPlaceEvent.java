@@ -3,8 +3,10 @@ package top.mrxiaom.sweet.buildertools.event;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 
@@ -24,5 +26,10 @@ public class FakeBlockPlaceEvent extends BlockPlaceEvent {
 
     public IMaterial material() {
         return material;
+    }
+
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return BlockPlaceEvent.getHandlerList();
     }
 }

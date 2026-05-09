@@ -2,6 +2,7 @@ package top.mrxiaom.sweet.buildertools.material;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -50,8 +51,27 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
         }
 
         @Override
-        public void placeBlock(@NotNull Player player, @NotNull Block block) {
+        public boolean placeBlock(@NotNull Player player, @NotNull Block block) {
+            try {
+                // 1.18+
+                BlockData data = material.createBlockData();
+                if (block.canPlace(data)) {
+                    block.setBlockData(data);
+                    return true;
+                }
+                return false;
+            } catch (LinkageError ignored) {
+            }
+            try {
+                // 1.13+
+                BlockData data = material.createBlockData();
+                block.setBlockData(data);
+                return true;
+            } catch (LinkageError ignored) {
+            }
+            // 1.8 - 1.12
             block.setType(material);
+            return true;
         }
     }
 }

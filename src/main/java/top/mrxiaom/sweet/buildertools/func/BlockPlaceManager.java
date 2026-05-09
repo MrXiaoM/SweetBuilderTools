@@ -82,13 +82,21 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             World world = block.getWorld();
             boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
 
-            // TODO: 需要替换 FakeBlockPlaceEvent 的前两个参数为新的方块快照
-            BlockPlaceEvent event = new FakeBlockPlaceEvent(block, block.getState(), clickedBlock, item, player, canBuild, tool, material);
+            // 通过 getState 备份方块快照，然后放置方块
+            BlockState previousState = block.getState();
+            if (!material.placeBlock(player, block)) {
+                return;
+            }
+
+            BlockPlaceEvent event = new FakeBlockPlaceEvent(block, previousState, clickedBlock, item, player, canBuild, tool, material);
             Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) return;
+            if (event.isCancelled()) {
+                // 如果其它插件阻止了方块放置，则恢复原方块
+                previousState.update(true);
+                return;
+            }
 
             ToolConfig.setAmount(item, currentAmount + 1);
-            material.placeBlock(player, block);
 
             BlockState state = block.getState();
             NBT.modifyPersistentData(state, nbt -> {

@@ -8,9 +8,24 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.api.WithPriority;
 
 public interface IMaterial {
+    /**
+     * 方块键，用于储存到物品中作为“当前选中方块”
+     */
     @NotNull String key();
+
+    /**
+     * 获取方块图标，用于在界面显示
+     */
     @NotNull ItemStack getIcon(@NotNull Player player);
-    void placeBlock(@NotNull Player player, @NotNull Block block);
+
+    /**
+     * 在指定位置放置方块
+     * @param player 放置方块的玩家
+     * @param block 方块位置
+     * @return 是否放置成功
+     */
+    boolean placeBlock(@NotNull Player player, @NotNull Block block);
+
     interface Provider extends WithPriority {
         @Nullable IMaterial parse(@NotNull String str);
     }
