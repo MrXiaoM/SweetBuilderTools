@@ -67,7 +67,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             e.setCancelled(true);
             Block clickedBlock = e.getClickedBlock();
             if (clickedBlock == null) return;
-            int currentAmount = ToolConfig.getAmount(item);
+            int currentAmount = tool.getAmount(item);
             Integer maxAmount = tool.amount();
             if (maxAmount != null && currentAmount >= maxAmount) {
                 // TODO: 提示数量不足
@@ -99,7 +99,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
 
             material.placeSound(block);
 
-            ToolConfig.setAmount(item, currentAmount + 1);
+            tool.setAmount(item, player, currentAmount + 1);
         }
     }
 

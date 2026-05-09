@@ -8,7 +8,10 @@ import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
+import top.mrxiaom.pluginbase.utils.ListPair;
+import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
+import top.mrxiaom.sweet.buildertools.Messages;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
 
@@ -111,14 +114,27 @@ public class ToolConfig {
         return item;
     }
 
-    public ItemStack createItem(Player player) {
-        ItemStack item = item().generateIcon(player);
+    public void addAmountReplacements(List<Pair<String, Object>> r, int amount) {
+        r.add(Pair.of("%amount%", amount));
+        if (this.amount == null) {
+            r.add(Pair.of("%current_amount%", Messages.Item.infinite.str()));
+            r.add(Pair.of("%max_amount%", Messages.Item.infinite.str()));
+        } else {
+            r.add(Pair.of("%current_amount%", this.amount - amount));
+            r.add(Pair.of("%max_amount%", this.amount));
+        }
+    }
+
+    public ItemStack createItem(Player player, int amount) {
+        ListPair<String, Object> r = new ListPair<>();
+        addAmountReplacements(r, amount);
+        ItemStack item = item().generateIcon(player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
         NBT.modify(item, nbt -> {
             nbt.setString(KEY_ID, id());
             nbt.setString(KEY_UNIQUE, UUID.randomUUID().toString());
             nbt.setString(KEY_PLAYER, player.getUniqueId().toString());
             nbt.setString(KEY_CURRENT, placeDefault().key());
-            nbt.setInteger(KEY_AMOUNT, 0);
+            nbt.setInteger(KEY_AMOUNT, amount);
         });
         return item;
     }
@@ -130,16 +146,19 @@ public class ToolConfig {
         });
     }
 
-    public static int getAmount(@NotNull ItemStack item) {
+    public int getAmount(@NotNull ItemStack item) {
         return NBT.get(item, nbt -> {
             return nbt.getInteger(KEY_AMOUNT);
         });
     }
 
-    public static void setAmount(@NotNull ItemStack item, int amount) {
+    public void setAmount(@NotNull ItemStack item, Player player, int amount) {
         NBT.modify(item, nbt -> {
             nbt.setInteger(KEY_AMOUNT, amount);
         });
+        ListPair<String, Object> r = new ListPair<>();
+        addAmountReplacements(r, amount);
+        item().applyItemMeta(item, player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
     }
 
     @NotNull

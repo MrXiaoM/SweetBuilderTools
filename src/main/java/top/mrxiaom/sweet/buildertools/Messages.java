@@ -8,6 +8,11 @@ import static top.mrxiaom.pluginbase.func.language.LanguageFieldAutoHolder.field
 @Language(prefix = "messages.")
 public class Messages {
 
+    @Language(prefix = "messages.item.")
+    public static class Item {
+        public static final Message infinite = field("无限");
+    }
+
     @Language(prefix = "messages.command.")
     public static class Command {
         public static final Message player__only = field("该命令只能由玩家执行");
