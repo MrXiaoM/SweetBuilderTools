@@ -66,10 +66,23 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> list = new ArrayList<>();
+            if (sender.hasPermission("sweet.buildertools.give")) {
+                list.add("give");
+            }
             if (sender.isOp()) {
                 list.add("reload");
             }
             return startsWith(args[0], list);
+        }
+        if (args.length == 2) {
+            if ("give".equalsIgnoreCase(args[0]) && sender.hasPermission("sweet.buildertools.give")) {
+                return startsWith(args[1], ToolsManager.inst().keys());
+            }
+        }
+        if (args.length == 3) {
+            if ("give".equalsIgnoreCase(args[0]) && sender.hasPermission("sweet.buildertools.give")) {
+                return null;
+            }
         }
         return Collections.emptyList();
     }
