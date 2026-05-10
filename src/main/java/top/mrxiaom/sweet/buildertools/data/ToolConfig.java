@@ -37,6 +37,8 @@ public class ToolConfig {
     private final @Nullable Integer amount;
     private final @NotNull LoadedIcon item;
     private final @NotNull List<IAction> eventPlaced;
+    private final @NotNull List<IAction> eventNoAmounts;
+    private final @NotNull List<IAction> eventNoSelected;
 
     private ToolConfig(@NotNull SweetBuilderTools plugin, @NotNull String id, @NotNull ConfigurationSection config) {
         this.plugin = plugin;
@@ -78,6 +80,8 @@ public class ToolConfig {
         }
         this.item = LoadedIcon.load(config, "item");
         this.eventPlaced = ActionProviders.loadActions(config, "events.placed");
+        this.eventNoAmounts = ActionProviders.loadActions(config, "events.no-amounts");
+        this.eventNoSelected = ActionProviders.loadActions(config, "events.no-selected");
     }
 
     public @NotNull SweetBuilderTools plugin() {
@@ -128,8 +132,24 @@ public class ToolConfig {
         return eventPlaced;
     }
 
+    public @NotNull List<IAction> eventNoAmounts() {
+        return eventNoAmounts;
+    }
+
+    public @NotNull List<IAction> eventNoSelected() {
+        return eventNoSelected;
+    }
+
     public void eventPlaced(Player player, List<Pair<String, Object>> r) {
-        ActionProviders.run(plugin, player, eventPlaced, r);
+        ActionProviders.run(plugin, player, eventPlaced(), r);
+    }
+
+    public void eventNoAmounts(Player player, List<Pair<String, Object>> r) {
+        ActionProviders.run(plugin, player, eventNoAmounts(), r);
+    }
+
+    public void eventNoSelected(Player player, List<Pair<String, Object>> r) {
+        ActionProviders.run(plugin, player, eventNoSelected(), r);
     }
 
     public void addReplacements(List<Pair<String, Object>> r, ItemStack item, Player player) {

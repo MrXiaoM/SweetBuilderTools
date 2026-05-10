@@ -28,8 +28,14 @@ item:
   display: '&e废石包 - %material%'
   lore:
     - '&7剩余数量: &f%current_amount% / %max_amount%'
+    - ''
+    - '&b物品栏右键 &7| &f选择方块类型'
 
 # 事件执行操作
 events:
   placed:
     - '[actionbar]&e废石包 - %material%&r&7 | &f%current_amount% &7/ &f%max_amount%'
+  no-amounts:
+    - '[message]&e你的废石包已经用完了'
+  no-selected:
+    - '[message]&e尚未选择任何方块，请先到物品栏选择方块类型'

@@ -79,12 +79,18 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             int currentAmount = tool.getAmount(item);
             Integer maxAmount = tool.amount();
             if (maxAmount != null && currentAmount >= maxAmount) {
-                // TODO: 提示数量不足
+                // 提示数量不足
+                ListPair<String, Object> r = new ListPair<>();
+                tool.addReplacements(r, item, player, currentAmount);
+                tool.eventNoAmounts(player, r);
                 return;
             }
             IMaterial material = tool.getMaterial(item);
             if (material == null) {
-                // TODO: 提示重新选择方块
+                // 提示未选择方块类型
+                ListPair<String, Object> r = new ListPair<>();
+                tool.addReplacements(r, item, player, currentAmount);
+                tool.eventNoSelected(player, r);
                 return;
             }
 
