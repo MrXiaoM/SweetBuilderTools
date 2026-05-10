@@ -15,7 +15,7 @@ import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.Messages;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
-import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 
 import java.util.*;
 
@@ -30,10 +30,10 @@ public class ToolConfig {
     private final @NotNull String id;
     private final boolean enable;
     private final @Nullable String permission;
-    private final @NotNull IMaterial placeDefault;
+    private final @NotNull BlockMaterial placeDefault;
     private final boolean placeDisableDrops;
-    private final @NotNull List<IMaterial> placeList;
-    private final @NotNull Map<String, IMaterial> placeListByKey;
+    private final @NotNull List<BlockMaterial> placeList;
+    private final @NotNull Map<String, BlockMaterial> placeListByKey;
     private final @Nullable Integer amount;
     private final @NotNull LoadedIcon item;
     private final @NotNull List<IAction> eventPlaced;
@@ -50,7 +50,7 @@ public class ToolConfig {
         } else {
             this.permission = permission;
         }
-        IMaterial placeDefault = plugin.parseMaterial(config.getString("place-blocks.default"));
+        BlockMaterial placeDefault = plugin.parseBlockMaterial(config.getString("place-blocks.default"));
         if (placeDefault == null) {
             throw new IllegalArgumentException("place-blocks.default 的值无效");
         }
@@ -58,14 +58,14 @@ public class ToolConfig {
         this.placeDisableDrops = config.getBoolean("place-blocks.disable-drops", true);
         this.placeList = new ArrayList<>();
         for (String str : config.getStringList("place-blocks.list")) {
-            IMaterial material = plugin.parseMaterial(str);
+            BlockMaterial material = plugin.parseBlockMaterial(str);
             if (material == null) {
                 throw new IllegalArgumentException("place-blocks.list 的值 " + str + " 无效");
             }
             this.placeList.add(material);
         }
         this.placeListByKey = new HashMap<>();
-        for (IMaterial material : placeList) {
+        for (BlockMaterial material : placeList) {
             this.placeListByKey.put(material.key(), material);
         }
         String amountStr = config.getString("amount");
@@ -104,7 +104,7 @@ public class ToolConfig {
         return permission == null || p.hasPermission(permission);
     }
 
-    public @NotNull IMaterial placeDefault() {
+    public @NotNull BlockMaterial placeDefault() {
         return placeDefault;
     }
 
@@ -112,11 +112,11 @@ public class ToolConfig {
         return placeDisableDrops;
     }
 
-    public @NotNull List<IMaterial> placeList() {
+    public @NotNull List<BlockMaterial> placeList() {
         return placeList;
     }
 
-    public @NotNull Map<String, IMaterial> placeListByKey() {
+    public @NotNull Map<String, BlockMaterial> placeListByKey() {
         return placeListByKey;
     }
 
@@ -158,7 +158,7 @@ public class ToolConfig {
 
     public void addReplacements(List<Pair<String, Object>> r, ItemStack item, Player player, int amount) {
         addAmountReplacements(r, amount);
-        IMaterial material = getMaterial(item);
+        BlockMaterial material = getMaterial(item);
         if (material != null) {
             r.add(Pair.of("%material%", material.getDisplayName(player)));
         } else {
@@ -193,7 +193,7 @@ public class ToolConfig {
     }
 
     @Nullable
-    public IMaterial getMaterial(@NotNull ItemStack item) {
+    public BlockMaterial getMaterial(@NotNull ItemStack item) {
         return NBT.get(item, nbt -> {
             return placeListByKey().get(nbt.getString(KEY_CURRENT));
         });

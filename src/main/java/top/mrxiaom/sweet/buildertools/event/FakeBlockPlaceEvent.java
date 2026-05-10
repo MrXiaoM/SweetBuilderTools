@@ -8,14 +8,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
-import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 
 public class FakeBlockPlaceEvent extends BlockPlaceEvent {
     private final SweetBuilderTools plugin;
     private final ToolConfig tool;
-    private final IMaterial material;
-    public FakeBlockPlaceEvent(SweetBuilderTools plugin, Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild, ToolConfig tool, IMaterial material) {
+    private final BlockMaterial material;
+    public FakeBlockPlaceEvent(SweetBuilderTools plugin, Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild, ToolConfig tool, BlockMaterial material) {
         // noinspection deprecation
         super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild);
         this.plugin = plugin;
@@ -27,7 +27,7 @@ public class FakeBlockPlaceEvent extends BlockPlaceEvent {
         return tool;
     }
 
-    public IMaterial material() {
+    public BlockMaterial material() {
         return material;
     }
 

@@ -20,7 +20,7 @@ import top.mrxiaom.pluginbase.gui.IGuiHolder;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
-import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 import top.mrxiaom.sweet.buildertools.func.AbstractGuiModule;
 
@@ -84,11 +84,11 @@ public class GuiSelect extends AbstractGuiModule {
         Impl gui = (Impl) instance;
         if (id == '方') {
             int i = ((gui.page - 1) * gui.pageSize) + appearTimes - 1;
-            List<IMaterial> list = gui.tool.placeList();
+            List<BlockMaterial> list = gui.tool.placeList();
             if (i >= list.size()) {
                 return new ItemStack(Material.AIR);
             } else {
-                IMaterial material = list.get(i);
+                BlockMaterial material = list.get(i);
                 boolean isSelected = gui.selectedBlock.key().equals(material.key());
                 ItemStack item = material.getIcon(player);
                 IModifier<List<String>> loreModifier = oldLore -> {
@@ -130,7 +130,7 @@ public class GuiSelect extends AbstractGuiModule {
     public class Impl extends Gui {
         private final ToolConfig tool;
         private final ItemStack item;
-        private IMaterial selectedBlock;
+        private BlockMaterial selectedBlock;
         private int page = 1;
         private final int pageSize;
         private final int maxPages;
@@ -168,9 +168,9 @@ public class GuiSelect extends AbstractGuiModule {
             if (clickedId.equals('方')) {
                 if (!click.isShiftClick() && click.isLeftClick()) {
                     int i = ((page - 1) * pageSize) + getAppearTimes(clickedId, slot) - 1;
-                    List<IMaterial> list = tool.placeList();
+                    List<BlockMaterial> list = tool.placeList();
                     if (i >= list.size()) return;
-                    IMaterial material = list.get(i);
+                    BlockMaterial material = list.get(i);
                     NBT.modify(item, nbt -> {
                         nbt.setString(ToolConfig.KEY_CURRENT, material.key());
                     });

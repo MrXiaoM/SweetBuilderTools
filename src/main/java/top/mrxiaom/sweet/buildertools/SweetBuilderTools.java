@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
-import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 
 public class SweetBuilderTools extends BukkitPlugin {
     public static SweetBuilderTools getInstance() {
@@ -83,19 +83,19 @@ public class SweetBuilderTools extends BukkitPlugin {
         MinecraftVersion.getVersion();
     }
 
-    private final IRegistry<IMaterial.Provider> materialRegistry = new SimpleRegistry<>();
+    private final IRegistry<BlockMaterial.Provider> materialRegistry = new SimpleRegistry<>();
 
-    public IRegistry<IMaterial.Provider> materialRegistry() {
+    public IRegistry<BlockMaterial.Provider> blockMaterialRegistry() {
         return materialRegistry;
     }
 
     @Nullable
-    public IMaterial parseMaterial(@Nullable String str) {
+    public BlockMaterial parseBlockMaterial(@Nullable String str) {
         if (str == null) {
             return null;
         }
-        for (IMaterial.Provider provider : materialRegistry.all()) {
-            IMaterial material = provider.parse(str);
+        for (BlockMaterial.Provider provider : materialRegistry.all()) {
+            BlockMaterial material = provider.parse(str);
             if (material != null) {
                 return material;
             }

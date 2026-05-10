@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.api.WithPriority;
 
-public interface IMaterial {
+public interface BlockMaterial {
     /**
      * 方块键，用于储存到物品中作为“当前选中方块”
      */
@@ -39,6 +39,6 @@ public interface IMaterial {
     void placeSound(@NotNull Block block, @NotNull Entity entity);
 
     interface Provider extends WithPriority {
-        @Nullable IMaterial parse(@NotNull String str);
+        @Nullable BlockMaterial parse(@NotNull String str);
     }
 }

@@ -15,16 +15,16 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.CollectionUtils;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
-import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.func.AbstractModule;
 
 import java.util.StringJoiner;
 
 @AutoRegister(priority = 990)
-public class VanillaMaterial extends AbstractModule implements IMaterial.Provider {
-    public VanillaMaterial(SweetBuilderTools plugin) {
+public class VanillaBlockMaterial extends AbstractModule implements BlockMaterial.Provider {
+    public VanillaBlockMaterial(SweetBuilderTools plugin) {
         super(plugin);
-        plugin.materialRegistry().register(this);
+        plugin.blockMaterialRegistry().register(this);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
     }
 
     @Override
-    public @Nullable IMaterial parse(@NotNull String str) {
+    public @Nullable BlockMaterial parse(@NotNull String str) {
         Material material = Util.valueOrNull(Material.class, str);
         if (material != null) {
             return new Impl(material);
@@ -41,7 +41,7 @@ public class VanillaMaterial extends AbstractModule implements IMaterial.Provide
         return null;
     }
 
-    public static class Impl implements IMaterial {
+    public static class Impl implements BlockMaterial {
         private final Material material;
         public Impl(Material material) {
             this.material = material;

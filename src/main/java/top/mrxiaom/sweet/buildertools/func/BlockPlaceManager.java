@@ -20,7 +20,7 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
-import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 import top.mrxiaom.sweet.buildertools.event.FakeBlockPlaceEvent;
@@ -85,7 +85,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 tool.eventNoAmounts(player, r);
                 return;
             }
-            IMaterial material = tool.getMaterial(item);
+            BlockMaterial material = tool.getMaterial(item);
             if (material == null) {
                 // 提示未选择方块类型
                 ListPair<String, Object> r = new ListPair<>();
