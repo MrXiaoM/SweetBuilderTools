@@ -2,6 +2,7 @@ package top.mrxiaom.sweet.buildertools;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.api.IRegistry;
@@ -21,6 +22,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
+import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
+import top.mrxiaom.sweet.buildertools.material.VanillaItemMaterial;
 
 public class SweetBuilderTools extends BukkitPlugin {
     public static SweetBuilderTools getInstance() {
@@ -83,10 +86,15 @@ public class SweetBuilderTools extends BukkitPlugin {
         MinecraftVersion.getVersion();
     }
 
-    private final IRegistry<BlockMaterial.Provider> materialRegistry = new SimpleRegistry<>();
+    private final IRegistry<BlockMaterial.Provider> blockMaterialRegistry = new SimpleRegistry<>();
+    private final IRegistry<ItemMaterial.Provider> itemMaterialRegistry = new SimpleRegistry<>();
 
     public IRegistry<BlockMaterial.Provider> blockMaterialRegistry() {
-        return materialRegistry;
+        return blockMaterialRegistry;
+    }
+
+    public IRegistry<ItemMaterial.Provider> itemMaterialRegistry() {
+        return itemMaterialRegistry;
     }
 
     @Nullable
@@ -94,13 +102,24 @@ public class SweetBuilderTools extends BukkitPlugin {
         if (str == null) {
             return null;
         }
-        for (BlockMaterial.Provider provider : materialRegistry.all()) {
+        for (BlockMaterial.Provider provider : blockMaterialRegistry.all()) {
             BlockMaterial material = provider.parse(str);
             if (material != null) {
                 return material;
             }
         }
         return null;
+    }
+
+    @Contract("_,false->!null")
+    public ItemMaterial parseItemMaterial(@Nullable String str, boolean nullable) {
+        if (str != null) for (ItemMaterial.Provider provider : itemMaterialRegistry.all()) {
+            ItemMaterial material = provider.parse(str);
+            if (material != null) {
+                return material;
+            }
+        }
+        return nullable ? null : VanillaItemMaterial.DEFAULT;
     }
 
     @Override
