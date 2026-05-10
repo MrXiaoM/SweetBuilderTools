@@ -1,6 +1,7 @@
 package top.mrxiaom.sweet.buildertools.data;
 
 import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteItemNBT;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IAction;
-import top.mrxiaom.pluginbase.func.gui.LoadedIcon;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -18,6 +18,7 @@ import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ToolConfig {
     public static final String KEY_ID = "SWEET_BUILDER_TOOLS_ID";
@@ -35,7 +36,7 @@ public class ToolConfig {
     private final @NotNull List<BlockMaterial> placeList;
     private final @NotNull Map<String, BlockMaterial> placeListByKey;
     private final @Nullable Integer amount;
-    private final @NotNull LoadedIcon item;
+    private final @NotNull ToolConfigItem item;
     private final @NotNull List<IAction> eventPlaced;
     private final @NotNull List<IAction> eventNoAmounts;
     private final @NotNull List<IAction> eventNoSelected;
@@ -78,7 +79,7 @@ public class ToolConfig {
             }
             this.amount = amount;
         }
-        this.item = LoadedIcon.load(config, "item");
+        this.item = ToolConfigItem.load(plugin, config, "item");
         this.eventPlaced = ActionProviders.loadActions(config, "events.placed");
         this.eventNoAmounts = ActionProviders.loadActions(config, "events.no-amounts");
         this.eventNoSelected = ActionProviders.loadActions(config, "events.no-selected");
@@ -124,7 +125,7 @@ public class ToolConfig {
         return amount;
     }
 
-    public @NotNull LoadedIcon item() {
+    public @NotNull ToolConfigItem item() {
         return item;
     }
 
@@ -181,15 +182,13 @@ public class ToolConfig {
         ListPair<String, Object> r = new ListPair<>();
         addAmountReplacements(r, amount);
         r.add("%material%", placeDefault().getDisplayName(player));
-        ItemStack item = item().generateIcon(player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
-        NBT.modify(item, nbt -> {
+        return item().generateIcon(player, s -> Pair.replace(s, r), l -> Pair.replace(l, r), nbt -> {
             nbt.setString(KEY_ID, id());
             nbt.setString(KEY_UNIQUE, UUID.randomUUID().toString());
             nbt.setString(KEY_PLAYER, player.getUniqueId().toString());
             nbt.setString(KEY_CURRENT, placeDefault().key());
             nbt.setInteger(KEY_AMOUNT, amount);
         });
-        return item;
     }
 
     @Nullable
@@ -206,20 +205,22 @@ public class ToolConfig {
     }
 
     public void setAmount(@NotNull ItemStack item, Player player, int amount) {
-        NBT.modify(item, nbt -> {
+        refreshItem(item, player, amount, nbt -> {
             nbt.setInteger(KEY_AMOUNT, amount);
         });
-        refreshItem(item, player, amount);
     }
 
     public void refreshItem(ItemStack item, Player player) {
-        refreshItem(item, player, getAmount(item));
+        refreshItem(item, player, getAmount(item), null);
     }
 
-    public void refreshItem(ItemStack item, Player player, int amount) {
+    public void refreshItem(ItemStack item, Player player, int amount, Consumer<ReadWriteItemNBT> extraNBT) {
         ListPair<String, Object> r = new ListPair<>();
         addReplacements(r, item, player, amount);
-        item().applyItemMeta(item, player, s -> Pair.replace(s, r), l -> Pair.replace(l, r));
+        item().applyItemMeta(item, player,
+                s -> Pair.replace(s, r),
+                l -> Pair.replace(l, r),
+                extraNBT);
     }
 
     @NotNull
