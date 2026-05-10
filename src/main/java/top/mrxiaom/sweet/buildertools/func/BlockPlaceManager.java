@@ -3,8 +3,7 @@ package top.mrxiaom.sweet.buildertools.func;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -22,6 +21,7 @@ import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.IMaterial;
+import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 import top.mrxiaom.sweet.buildertools.event.FakeBlockPlaceEvent;
 import top.mrxiaom.sweet.buildertools.gui.GuiSelect;
@@ -70,6 +70,12 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             e.setCancelled(true);
             Block clickedBlock = e.getClickedBlock();
             if (clickedBlock == null) return;
+            if (!player.isSneaking()) {
+                // 非潜行状态下需要考虑点击的方块是否可以右键交互的问题
+                if (EnumBlockState.hasInteractFuncWithBlock(clickedBlock.getState())) {
+                    return;
+                }
+            }
             int currentAmount = tool.getAmount(item);
             Integer maxAmount = tool.amount();
             if (maxAmount != null && currentAmount >= maxAmount) {
