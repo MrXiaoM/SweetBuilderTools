@@ -25,6 +25,11 @@ public interface BlockMaterial {
     @NotNull ItemStack getIcon(@NotNull Player player);
 
     /**
+     * 获取方块对应的物品材质
+     */
+    @NotNull ItemMaterial getItemMaterial();
+
+    /**
      * 在指定位置放置方块
      * @param player 放置方块的玩家
      * @param block 方块位置

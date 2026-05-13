@@ -16,6 +16,7 @@ import top.mrxiaom.pluginbase.utils.CollectionUtils;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
+import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
 import top.mrxiaom.sweet.buildertools.func.AbstractModule;
 
 import java.util.StringJoiner;
@@ -43,8 +44,10 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
 
     public static class Impl implements BlockMaterial {
         private final Material material;
+        private final ItemMaterial itemMaterial;
         public Impl(Material material) {
             this.material = material;
+            this.itemMaterial = new VanillaItemMaterial.Impl(material, null);
         }
 
         @Override
@@ -82,6 +85,11 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
         @Override
         public @NotNull ItemStack getIcon(@NotNull Player player) {
             return new ItemStack(material);
+        }
+
+        @Override
+        public @NotNull ItemMaterial getItemMaterial() {
+            return itemMaterial;
         }
 
         @Override
