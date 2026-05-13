@@ -18,6 +18,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
+import top.mrxiaom.sweet.buildertools.data.ToolData;
 import top.mrxiaom.sweet.buildertools.event.FakeBlockPlaceEvent;
 
 import java.util.*;
@@ -57,13 +58,13 @@ public class AntiDropManager extends AbstractModule implements Listener {
 
     private void removeFlag(Block block) {
         NBTCompound nbt = getNBT(block);
-        if (nbt.hasTag(ToolConfig.BLOCK_ID)) {
+        if (nbt.hasTag(ToolData.BLOCK_ID)) {
             if (plugin.debug()) {
                 info(String.format("移除了 %s 方块 (%s, %d, %d, %d)",
-                        nbt.getString(ToolConfig.BLOCK_ID),
+                        nbt.getString(ToolData.BLOCK_ID),
                         block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
             }
-            nbt.removeKey(ToolConfig.BLOCK_ID);
+            nbt.removeKey(ToolData.BLOCK_ID);
         }
     }
 
@@ -74,7 +75,7 @@ public class AntiDropManager extends AbstractModule implements Listener {
             // 放置方块时添加标签
             String toolId = ((FakeBlockPlaceEvent) event).tool().id();
             NBTCompound nbt = getNBT(event.getBlock());
-            nbt.setString(ToolConfig.BLOCK_ID, toolId);
+            nbt.setString(ToolData.BLOCK_ID, toolId);
             if (plugin.debug()) {
                 info(String.format("为方块 (%s, %d, %d, %d) 添加标签 %s",
                         event.getBlock().getWorld().getName(),
@@ -94,9 +95,9 @@ public class AntiDropManager extends AbstractModule implements Listener {
         // 挖掘方块时检测到标签就禁止掉落
         Block block = event.getBlock();
         NBTCompound nbt = getNBT(block);
-        if (nbt.hasTag(ToolConfig.BLOCK_ID)) {
-            String toolId = nbt.getString(ToolConfig.BLOCK_ID);
-            nbt.removeKey(ToolConfig.BLOCK_ID);
+        if (nbt.hasTag(ToolData.BLOCK_ID)) {
+            String toolId = nbt.getString(ToolData.BLOCK_ID);
+            nbt.removeKey(ToolData.BLOCK_ID);
             ToolConfig tool = ToolsManager.inst().get(toolId);
             if (tool != null && tool.placeDisableDrops()) {
                 if (plugin.debug()) {
@@ -181,11 +182,11 @@ public class AntiDropManager extends AbstractModule implements Listener {
             }
             Block destinationBlock = block.getRelative(direction);
             NBTCompound current = getNBT(block);
-            if (current.hasTag(ToolConfig.BLOCK_ID)) {
+            if (current.hasTag(ToolData.BLOCK_ID)) {
                 NBTCompound destination = getNBT(destinationBlock);
-                String blockId = current.getString(ToolConfig.BLOCK_ID);
-                destination.setString(ToolConfig.BLOCK_ID, blockId);
-                current.removeKey(ToolConfig.BLOCK_ID);
+                String blockId = current.getString(ToolData.BLOCK_ID);
+                destination.setString(ToolData.BLOCK_ID, blockId);
+                current.removeKey(ToolData.BLOCK_ID);
                 if (plugin.debug()) {
                     info(String.format("活塞将 %s 方块 (%s, %d, %d, %d) 移到了 (%s, %d, %d, %d)",
                             blockId,

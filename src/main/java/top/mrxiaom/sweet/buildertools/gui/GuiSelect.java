@@ -21,7 +21,9 @@ import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
+import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
+import top.mrxiaom.sweet.buildertools.data.ToolData;
 import top.mrxiaom.sweet.buildertools.func.AbstractGuiModule;
 
 import java.io.File;
@@ -171,12 +173,30 @@ public class GuiSelect extends AbstractGuiModule {
                     List<BlockMaterial> list = tool.placeList();
                     if (i >= list.size()) return;
                     BlockMaterial material = list.get(i);
-                    NBT.modify(item, nbt -> {
-                        nbt.setString(ToolConfig.KEY_CURRENT, material.key());
-                    });
-                    tool.refreshItem(item, player);
-                    selectedBlock = material;
-                    plugin.getScheduler().runTask(this::open);
+                    ToolData data = ToolData.readFrom(item);
+                    if (data.isValid()) {
+                        data.current(material.key());
+                        if (tool.placeUseMaterialByBlock()) {
+                            // 如果需要更换 material，则更换物品之后再应用 NBT
+                            ItemMaterial itemMaterial = material.getItemMaterial();
+                            ItemStack ref = itemMaterial.create(player, item.getAmount());
+                            item.setType(ref.getType());
+                            NBT.get(ref, refNbt -> {
+                                NBT.modify(item, nbt -> {
+                                    nbt.clearNBT();
+                                    nbt.mergeCompound(refNbt);
+                                    data.saveTo(nbt);
+                                });
+                            });
+                        } else {
+                            // 如果不需要更换 material，直接保存
+                            data.saveTo(item);
+                        }
+                        // 保存后刷新物品信息
+                        tool.refreshItem(item, player);
+                        selectedBlock = material;
+                        plugin.getScheduler().runTask(this::open);
+                    }
                 }
                 return;
             }

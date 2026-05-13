@@ -18,6 +18,8 @@ place-blocks:
   - ANDESITE
   - CALCITE
   - TUFF
+  # 物品材质是否随着选择的方块变化而变化
+  use-material-by-block: true
 
 # 方块数量，infinite 代表无限制
 amount: 512

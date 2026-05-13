@@ -2,7 +2,6 @@ package top.mrxiaom.sweet.buildertools.data;
 
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteItemNBT;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -131,71 +130,14 @@ public class ToolConfigItem {
     }
 
     /**
-     * 生成一个新的物品
-     *
-     * @param player 玩家，用于替换 PAPI 变量
-     * @see ToolConfigItem#generateIcon(ItemStack, Player, IModifier, IModifier, Consumer)
-     */
-    @NotNull
-    public ItemStack generateIcon(@NotNull Player player) {
-        return generateIcon(player, null, null, null);
-    }
-
-    /**
-     * 生成一个新的物品
-     *
-     * @param player              玩家，用于替换 PAPI 变量
-     * @param displayNameModifier 物品名称修饰器
-     * @param loreModifier        物品Lore修饰器
-     * @see ToolConfigItem#generateIcon(ItemStack, Player, IModifier, IModifier, Consumer)
-     */
-    @NotNull
-    public ItemStack generateIcon(@NotNull Player player, @Nullable IModifier<String> displayNameModifier, @Nullable IModifier<List<String>> loreModifier, @Nullable Consumer<ReadWriteItemNBT> extraNBT) {
-        if (amount <= 0) return new ItemStack(Material.AIR);
-        ItemStack item = material.create(player, amount);
-        return generateIcon(item, player, displayNameModifier, loreModifier, extraNBT);
-    }
-
-    /**
-     * 基于已有物品，覆盖图标配置到该物品上。这个方法会忽略 <code>material</code> 选项。
-     *
-     * @param item   原物品
-     * @param player 玩家，用于替换 PAPI 变量
-     * @return <code>item</code> 的引用
-     * @see ToolConfigItem#generateIcon(ItemStack, Player, IModifier, IModifier, Consumer)
-     */
-    @NotNull
-    public ItemStack generateIcon(@Nullable ItemStack item, @NotNull Player player) {
-        return generateIcon(item, player, null, null, null);
-    }
-
-    /**
-     * 基于已有物品，覆盖图标配置到该物品上。这个方法会忽略 <code>material</code> 选项。
-     *
-     * @param item                原物品
-     * @param player              玩家，用于替换 PAPI 变量
-     * @param displayNameModifier 物品名称修饰器
-     * @param loreModifier        物品Lore修饰器
-     * @param extraNBT            额外修改物品NBT标签
-     * @return 如果 <code>item</code> 不是 <code>null</code>，返回原物品的引用
-     */
-    @NotNull
-    public ItemStack generateIcon(@Nullable ItemStack item, @NotNull Player player, @Nullable IModifier<String> displayNameModifier, @Nullable IModifier<List<String>> loreModifier, @Nullable Consumer<ReadWriteItemNBT> extraNBT) {
-        if (item == null || amount == 0) return new ItemStack(Material.AIR);
-        item.setAmount(amount);
-        applyItemMeta(item, player, displayNameModifier, loreModifier, extraNBT);
-        return item;
-    }
-
-    /**
      * 应用该图标配置中的 物品名、物品Lore、发光、自定义标记… 等元数据到指定物品
      *
      * @param item   原物品
      * @param player 玩家，用于替换 PAPI 变量
-     * @see ToolConfigItem#applyItemMeta(ItemStack, Player, IModifier, IModifier, Consumer)
+     * @see ToolConfigItem#applyItemMetaImpl(ItemStack, Player, IModifier, IModifier, Consumer)
      */
     public void applyItemMeta(@NotNull ItemStack item, @NotNull Player player) {
-        applyItemMeta(item, player, null, null, null);
+        applyItemMetaImpl(item, player, null, null, null);
     }
 
     /**
@@ -207,7 +149,23 @@ public class ToolConfigItem {
      * @param loreModifier        物品Lore修饰器
      * @param extraNBT            额外修改物品NBT标签
      */
-    public void applyItemMeta(@NotNull ItemStack item, @NotNull Player player, @Nullable IModifier<String> displayNameModifier, @Nullable IModifier<List<String>> loreModifier, @Nullable Consumer<ReadWriteItemNBT> extraNBT) {
+    public void applyItemMeta(@NotNull ItemStack item, @NotNull Player player, @Nullable List<Pair<String, Object>> displayNameModifier, @Nullable List<Pair<String, Object>> loreModifier, @Nullable Consumer<ReadWriteItemNBT> extraNBT) {
+        applyItemMetaImpl(item, player,
+                input -> Pair.replace(input, displayNameModifier),
+                input -> Pair.replace(input, loreModifier),
+                extraNBT);
+    }
+
+    /**
+     * 应用该图标配置中的 物品名、物品Lore、发光、自定义标记… 等元数据到指定物品
+     *
+     * @param item                原物品
+     * @param player              玩家，用于替换 PAPI 变量
+     * @param displayNameModifier 物品名称修饰器
+     * @param loreModifier        物品Lore修饰器
+     * @param extraNBT            额外修改物品NBT标签
+     */
+    public void applyItemMetaImpl(@NotNull ItemStack item, @NotNull Player player, @Nullable IModifier<String> displayNameModifier, @Nullable IModifier<List<String>> loreModifier, @Nullable Consumer<ReadWriteItemNBT> extraNBT) {
         if (!display.isEmpty()) {
             String displayName = PAPI.setPlaceholders(player, fit(displayNameModifier, display));
             AdventureItemStack.setItemDisplayName(item, displayName);

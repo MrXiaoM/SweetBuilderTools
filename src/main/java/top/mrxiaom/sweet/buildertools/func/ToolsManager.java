@@ -14,6 +14,7 @@ import top.mrxiaom.pluginbase.utils.ConfigUtils;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
+import top.mrxiaom.sweet.buildertools.data.ToolData;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,12 +74,11 @@ public class ToolsManager extends AbstractModule {
 
     @Nullable
     public ToolConfig get(@Nullable ItemStack item) {
-        if (item == null || item.getAmount() < 1 || item.getType().equals(Material.AIR)) {
-            return null;
+        ToolData data = ToolData.readFrom(item);
+        if (data.isValid()) {
+            return get(data.id());
         }
-        return NBT.get(item, nbt -> {
-            return get(nbt.getString(ToolConfig.KEY_ID));
-        });
+        return null;
     }
 
     public static ToolsManager inst() {

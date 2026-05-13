@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.buildertools.data;
 
-import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteItemNBT;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -21,12 +20,6 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class ToolConfig {
-    public static final String KEY_ID = "SWEET_BUILDER_TOOLS_ID";
-    public static final String KEY_UNIQUE = "SWEET_BUILDER_TOOLS_UNIQUE";
-    public static final String KEY_PLAYER = "SWEET_BUILDER_TOOLS_PLAYER";
-    public static final String KEY_AMOUNT = "SWEET_BUILDER_TOOLS_AMOUNT";
-    public static final String KEY_CURRENT = "SWEET_BUILDER_TOOLS_CURRENT";
-    public static final String BLOCK_ID = "SBT_ID";
     private final @NotNull SweetBuilderTools plugin;
     private final @NotNull String id;
     private final boolean enable;
@@ -35,6 +28,7 @@ public class ToolConfig {
     private final boolean placeDisableDrops;
     private final @NotNull List<BlockMaterial> placeList;
     private final @NotNull Map<String, BlockMaterial> placeListByKey;
+    private final boolean placeUseMaterialByBlock;
     private final @Nullable Integer amount;
     private final @NotNull ToolConfigItem item;
     private final @NotNull List<IAction> eventPlaced;
@@ -69,6 +63,7 @@ public class ToolConfig {
         for (BlockMaterial material : placeList) {
             this.placeListByKey.put(material.key(), material);
         }
+        this.placeUseMaterialByBlock = config.getBoolean("place-blocks.use-material-by-block");
         String amountStr = config.getString("amount");
         if ("infinite".equals(amountStr)) {
             this.amount = null;
@@ -119,6 +114,10 @@ public class ToolConfig {
 
     public @NotNull Map<String, BlockMaterial> placeListByKey() {
         return placeListByKey;
+    }
+
+    public boolean placeUseMaterialByBlock() {
+        return placeUseMaterialByBlock;
     }
 
     public @Nullable Integer amount() {
@@ -179,35 +178,46 @@ public class ToolConfig {
     }
 
     public ItemStack createItem(Player player, int amount) {
+        ItemStack item;
+        BlockMaterial material = placeDefault();
+        if (placeUseMaterialByBlock()) {
+            item = material.getItemMaterial().create(player, amount);
+        } else {
+            item = item().material().create(player, amount);
+        }
         ListPair<String, Object> r = new ListPair<>();
         addAmountReplacements(r, amount);
-        r.add("%material%", placeDefault().getDisplayName(player));
-        return item().generateIcon(player, s -> Pair.replace(s, r), l -> Pair.replace(l, r), nbt -> {
-            nbt.setString(KEY_ID, id());
-            nbt.setString(KEY_UNIQUE, UUID.randomUUID().toString());
-            nbt.setString(KEY_PLAYER, player.getUniqueId().toString());
-            nbt.setString(KEY_CURRENT, placeDefault().key());
-            nbt.setInteger(KEY_AMOUNT, amount);
-        });
+        r.add("%material%", material.getDisplayName(player));
+
+        ToolData data = ToolData.create()
+                .id(id)
+                .unique(UUID.randomUUID().toString())
+                .player(player.getUniqueId().toString())
+                .current(material.key())
+                .amount(amount);
+        item().applyItemMeta(item, player, r, r, data::saveTo);
+        return item;
     }
 
     @Nullable
     public BlockMaterial getMaterial(@NotNull ItemStack item) {
-        return NBT.get(item, nbt -> {
-            return placeListByKey().get(nbt.getString(KEY_CURRENT));
-        });
+        ToolData data = ToolData.readFrom(item);
+        if (data.isValid()) {
+            return placeListByKey().get(data.current());
+        }
+        return null;
     }
 
     public int getAmount(@NotNull ItemStack item) {
-        return NBT.get(item, nbt -> {
-            return nbt.getInteger(KEY_AMOUNT);
-        });
+        return ToolData.readFrom(item).amount();
     }
 
     public void setAmount(@NotNull ItemStack item, Player player, int amount) {
-        refreshItem(item, player, amount, nbt -> {
-            nbt.setInteger(KEY_AMOUNT, amount);
-        });
+        ToolData data = ToolData.readFrom(item);
+        if (data.isValid()) {
+            data.amount(amount);
+            refreshItem(item, player, amount, data::saveTo);
+        }
     }
 
     public void refreshItem(ItemStack item, Player player) {
@@ -217,10 +227,7 @@ public class ToolConfig {
     public void refreshItem(ItemStack item, Player player, int amount, Consumer<ReadWriteItemNBT> extraNBT) {
         ListPair<String, Object> r = new ListPair<>();
         addReplacements(r, item, player, amount);
-        item().applyItemMeta(item, player,
-                s -> Pair.replace(s, r),
-                l -> Pair.replace(l, r),
-                extraNBT);
+        item().applyItemMeta(item, player, r, r, extraNBT);
     }
 
     @NotNull
