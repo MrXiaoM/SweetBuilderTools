@@ -169,8 +169,9 @@ public class ToolConfig {
     public void addAmountReplacements(List<Pair<String, Object>> r, int amount) {
         r.add(Pair.of("%amount%", amount));
         if (this.amount == null) {
-            r.add(Pair.of("%current_amount%", Messages.Item.infinite.str()));
-            r.add(Pair.of("%max_amount%", Messages.Item.infinite.str()));
+            String inf = Messages.Item.infinite.str();
+            r.add(Pair.of("%current_amount%", inf));
+            r.add(Pair.of("%max_amount%", inf));
         } else {
             r.add(Pair.of("%current_amount%", this.amount - amount));
             r.add(Pair.of("%max_amount%", this.amount));
