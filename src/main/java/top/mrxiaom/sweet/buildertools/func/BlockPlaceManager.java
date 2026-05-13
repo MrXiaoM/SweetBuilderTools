@@ -61,13 +61,13 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         if (e.useItemInHand() == Event.Result.DENY) return;
         ItemStack item = e.getItem();
-        if (item == null || isOffHand(e)) return;
         ToolConfig tool = ToolsManager.inst().get(item);
         if (tool == null) return;
+        e.setCancelled(true);
+        if (isOffHand(e)) return;
         Player player = e.getPlayer();
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (e.useInteractedBlock() == Event.Result.DENY) return;
-            e.setCancelled(true);
             Block clickedBlock = e.getClickedBlock();
             if (clickedBlock == null) return;
             if (!player.isSneaking()) {

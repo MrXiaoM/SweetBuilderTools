@@ -7,6 +7,7 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
@@ -73,6 +74,7 @@ public class ToolsManager extends AbstractModule {
     }
 
     @Nullable
+    @Contract("null->null")
     public ToolConfig get(@Nullable ItemStack item) {
         ToolData data = ToolData.readFrom(item);
         if (data.isValid()) {
