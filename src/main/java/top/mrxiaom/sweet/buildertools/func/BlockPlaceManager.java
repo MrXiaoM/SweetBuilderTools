@@ -63,7 +63,9 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         ItemStack item = e.getItem();
         ToolConfig tool = ToolsManager.inst().get(item);
         if (tool == null) return;
-        e.setCancelled(true);
+        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+            e.setCancelled(true);
+        }
         if (isOffHand(e)) return;
         Player player = e.getPlayer();
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
