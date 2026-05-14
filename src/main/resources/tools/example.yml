@@ -8,6 +8,7 @@ place-blocks:
   # 默认方块
   default: STONE
   # 是否禁止挖掘方块后掉落物品
+  # 该功能仅限 1.16.4+ 版本使用
   disable-drops: true
   # 可以选择的方块列表
   list:
