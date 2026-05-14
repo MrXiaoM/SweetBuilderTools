@@ -63,66 +63,97 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         ItemStack item = e.getItem();
         ToolConfig tool = ToolsManager.inst().get(item);
         if (tool == null) return;
+        Event.Result useInteractedBlock = e.useInteractedBlock();
         if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             e.setCancelled(true);
         }
         if (isOffHand(e)) return;
         Player player = e.getPlayer();
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (e.useInteractedBlock() == Event.Result.DENY) return;
-            Block clickedBlock = e.getClickedBlock();
-            if (clickedBlock == null) return;
-            if (!player.isSneaking()) {
-                // 非潜行状态下需要考虑点击的方块是否可以右键交互的问题
-                if (EnumBlockState.hasInteractFuncWithBlock(clickedBlock.getState())) {
-                    return;
+            if (useInteractedBlock == Event.Result.DENY) {
+                if (plugin.debug()) {
+                    player.sendMessage("工具 " + tool.id() + " 交互事件 - 点击方块被取消");
                 }
-            }
-            int currentAmount = tool.getAmount(item);
-            Integer maxAmount = tool.amount();
-            if (maxAmount != null && currentAmount >= maxAmount) {
-                // 提示数量不足
-                ListPair<String, Object> r = new ListPair<>();
-                tool.addReplacements(r, item, player, currentAmount);
-                tool.eventNoAmounts(player, r);
                 return;
             }
-            BlockMaterial material = tool.getMaterial(item);
-            if (material == null) {
-                // 提示未选择方块类型
-                ListPair<String, Object> r = new ListPair<>();
-                tool.addReplacements(r, item, player, currentAmount);
-                tool.eventNoSelected(player, r);
-                return;
-            }
-
-            Block block = clickedBlock.getRelative(e.getBlockFace());
-            World world = block.getWorld();
-            boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
-
-            // 通过 getState 备份方块快照，然后放置方块
-            BlockState previousState = block.getState();
-            if (!material.placeBlock(player, block)) {
-                return;
-            }
-
-            BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, previousState, clickedBlock, item, player, canBuild, tool, material);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                // 如果其它插件阻止了方块放置，则恢复原方块
-                previousState.update(true);
-                return;
-            }
-
-            material.placeSound(block, player);
-
-            int amount = currentAmount + 1;
-            tool.setAmount(item, player, amount);
-
-            ListPair<String, Object> r = new ListPair<>();
-            tool.addReplacements(r, item, player, amount);
-            tool.eventPlaced(player, r);
+            rightClick(e, e.getPlayer(), item, tool);
         }
+    }
+
+    private void rightClick(PlayerInteractEvent e, Player player, ItemStack item, ToolConfig tool) {
+        Block clickedBlock = e.getClickedBlock();
+        if (clickedBlock == null) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 未点击方块");
+            }
+            return;
+        }
+        if (!player.isSneaking()) {
+            // 非潜行状态下需要考虑点击的方块是否可以右键交互的问题
+            BlockState state = clickedBlock.getState();
+            if (EnumBlockState.hasInteractFuncWithBlock(state)) {
+                if (plugin.debug()) {
+                    player.sendMessage("工具 " + tool.id() + " 交互事件 - 方块 " + state.getClass().getName() + " 存在交互功能，需要按住 Shift 才能放置");
+                }
+                return;
+            }
+        }
+        int currentAmount = tool.getAmount(item);
+        Integer maxAmount = tool.amount();
+        if (maxAmount != null && currentAmount >= maxAmount) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 数量不足");
+            }
+            // 提示数量不足
+            ListPair<String, Object> r = new ListPair<>();
+            tool.addReplacements(r, item, player, currentAmount);
+            tool.eventNoAmounts(player, r);
+            return;
+        }
+        BlockMaterial material = tool.getMaterial(item);
+        if (material == null) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 未选择方块类型");
+            }
+            // 提示未选择方块类型
+            ListPair<String, Object> r = new ListPair<>();
+            tool.addReplacements(r, item, player, currentAmount);
+            tool.eventNoSelected(player, r);
+            return;
+        }
+
+        Block block = clickedBlock.getRelative(e.getBlockFace());
+        World world = block.getWorld();
+        boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
+
+        // 通过 getState 备份方块快照，然后放置方块
+        BlockState previousState = block.getState();
+        if (!material.placeBlock(player, block)) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 放置方块 " + material.key() + " 失败");
+            }
+            return;
+        }
+
+        BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, previousState, clickedBlock, item, player, canBuild, tool, material);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 其它插件阻止了放置方块");
+            }
+            // 如果其它插件阻止了方块放置，则恢复原方块
+            previousState.update(true);
+            return;
+        }
+
+        material.placeSound(block, player);
+
+        int amount = currentAmount + 1;
+        tool.setAmount(item, player, amount);
+
+        ListPair<String, Object> r = new ListPair<>();
+        tool.addReplacements(r, item, player, amount);
+        tool.eventPlaced(player, r);
     }
 
     @EventHandler
