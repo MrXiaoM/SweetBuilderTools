@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -28,6 +29,7 @@ import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
+import top.mrxiaom.sweet.buildertools.data.ToolData;
 import top.mrxiaom.sweet.buildertools.event.FakeBlockPlaceEvent;
 import top.mrxiaom.sweet.buildertools.gui.GuiSelect;
 
@@ -66,19 +68,21 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent e) {
         if (e.useItemInHand() == Event.Result.DENY) return;
         if (e.useInteractedBlock() == Event.Result.DENY) return;
         ItemStack item = e.getItem();
-        ToolConfig tool = ToolsManager.inst().get(item);
-        if (tool == null) return;
-        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            e.setCancelled(true);
-        }
-        if (isOffHand(e)) return;
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            rightClick(e, e.getPlayer(), item, tool);
+        ToolData data = ToolData.readFrom(item);
+        if (data.isValid()) {
+            if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+                e.setCancelled(true);
+            }
+            ToolConfig tool = ToolsManager.inst().get(data.id());
+            if (tool == null || isOffHand(e)) return;
+            if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                rightClick(e, e.getPlayer(), item, tool);
+            }
         }
     }
 
@@ -224,7 +228,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         tool.eventPlaced(player, r);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onOpenSelectGui(InventoryClickEvent e) {
         if (e.isCancelled()) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
