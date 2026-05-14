@@ -8,6 +8,8 @@ import top.mrxiaom.pluginbase.api.WithPriority;
 
 public interface ItemMaterial extends WithPriority {
 
+    @NotNull String key();
+
     /**
      * 创建一个新物品
      * @param player 请求的玩家

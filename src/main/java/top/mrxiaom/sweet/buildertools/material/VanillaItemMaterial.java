@@ -43,6 +43,11 @@ public class VanillaItemMaterial extends AbstractModule implements ItemMaterial.
         }
 
         @Override
+        public @NotNull String key() {
+            return String.valueOf(material);
+        }
+
+        @Override
         public @NotNull ItemStack create(@NotNull Player player, int amount) {
             if (dataValue != null) {
                 //noinspection deprecation
