@@ -2,8 +2,10 @@ package top.mrxiaom.sweet.buildertools.func;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -16,6 +18,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.utils.ListPair;
@@ -25,6 +28,9 @@ import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 import top.mrxiaom.sweet.buildertools.event.FakeBlockPlaceEvent;
 import top.mrxiaom.sweet.buildertools.gui.GuiSelect;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @AutoRegister
 public class BlockPlaceManager extends AbstractModule implements Listener {
@@ -73,6 +79,39 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         }
     }
 
+    private final Set<Material> REPLACEABLE = new HashSet<Material>() {{
+        add(Material.GRASS);
+        add(Material.TALL_GRASS);
+        add(Material.VINE);
+    }};
+    private boolean isReplaceable(Block block) {
+        try {
+            // Paper
+            return block.isReplaceable();
+        } catch (LinkageError ignored) {
+            // Spigot 暂时先加几种方块，能用就行
+            return REPLACEABLE.contains(block.getType());
+        }
+    }
+
+    @Nullable
+    private Block getPlaceBlock(Block clickedBlock, BlockFace clickedFace) {
+        // 点击空气是不允许的
+        if (clickedBlock.getType().equals(Material.AIR)) {
+            return null;
+        }
+        // 如果点击可替换方块，则返回点击的方块为需要放置的位置
+        if (isReplaceable(clickedBlock)) {
+            return clickedBlock;
+        }
+        // 获取点击那面相对的方块位置，如果是可替换方块，则允许放置
+        Block block = clickedBlock.getRelative(clickedFace);
+        if (block.getType().equals(Material.AIR) || isReplaceable(block)) {
+            return block;
+        }
+        return null;
+    }
+
     private void rightClick(PlayerInteractEvent e, Player player, ItemStack item, ToolConfig tool) {
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock == null) {
@@ -91,6 +130,24 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 return;
             }
         }
+
+        Block block = getPlaceBlock(clickedBlock, e.getBlockFace());
+        if (block == null) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到不可放置的位置");
+            }
+            return;
+        }
+        World world = block.getWorld();
+        for (Entity entity : world.getEntities()) {
+            if (entity.getLocation().getBlock().equals(block)) {
+                if (plugin.debug()) {
+                    player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
+                }
+                return;
+            }
+        }
+
         int currentAmount = tool.getAmount(item);
         Integer maxAmount = tool.amount();
         if (maxAmount != null && currentAmount >= maxAmount) {
@@ -115,8 +172,6 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             return;
         }
 
-        Block block = clickedBlock.getRelative(e.getBlockFace());
-        World world = block.getWorld();
         boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
 
         // 通过 getState 备份方块快照，然后放置方块
