@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
@@ -143,8 +144,12 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         World world = block.getWorld();
         if (supportsBoundingBox) {
             // 1.14+ 检查碰撞箱是否重叠
+            int blockX = block.getX();
+            int blockY = block.getY();
+            int blockZ = block.getZ();
+            BoundingBox blockBox = new BoundingBox(blockX, blockY, blockZ, blockX + 1, blockY + 1, blockZ + 1);
             for (Entity entity : world.getEntities()) {
-                if (entity.getBoundingBox().overlaps(block.getBoundingBox())) {
+                if (entity.getBoundingBox().overlaps(blockBox)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
                     }
