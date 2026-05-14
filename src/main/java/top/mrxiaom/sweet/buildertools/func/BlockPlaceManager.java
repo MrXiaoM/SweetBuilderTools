@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.utils.ListPair;
+import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
@@ -34,6 +35,7 @@ import java.util.Set;
 
 @AutoRegister
 public class BlockPlaceManager extends AbstractModule implements Listener {
+    private final boolean supportsBoundingBox = Util.isPresent("org.bukkit.util.BoundingBox");
     public BlockPlaceManager(SweetBuilderTools plugin) {
         super(plugin);
         registerEvents();
@@ -139,12 +141,25 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             return;
         }
         World world = block.getWorld();
-        for (Entity entity : world.getEntities()) {
-            if (entity.getLocation().getBlock().equals(block)) {
-                if (plugin.debug()) {
-                    player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
+        if (supportsBoundingBox) {
+            // 1.14+ 检查碰撞箱是否重叠
+            for (Entity entity : world.getEntities()) {
+                if (entity.getBoundingBox().overlaps(block.getBoundingBox())) {
+                    if (plugin.debug()) {
+                        player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
+                    }
+                    return;
                 }
-                return;
+            }
+        } else {
+            // 1.14 以下检查坐标
+            for (Entity entity : world.getEntities()) {
+                if (entity.getLocation().getBlock().equals(block)) {
+                    if (plugin.debug()) {
+                        player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
+                    }
+                    return;
+                }
             }
         }
 
