@@ -182,9 +182,9 @@ public class ToolConfig {
         ItemStack item;
         BlockMaterial material = placeDefault();
         if (placeUseMaterialByBlock()) {
-            item = material.getItemMaterial().create(player, amount);
+            item = material.getItemMaterial().create(player, 1);
         } else {
-            item = item().material().create(player, amount);
+            item = item().material().create(player, 1);
         }
         ListPair<String, Object> r = new ListPair<>();
         addAmountReplacements(r, amount);
