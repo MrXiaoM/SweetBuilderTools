@@ -25,6 +25,15 @@ place-blocks:
 # 方块数量，infinite 代表无限制
 amount: 512
 
+# 将相应物品拖入这个工具，用于补充数量
+recover-by-swap:
+  # 是否启用这个功能
+  enable: false
+  # 拖入什么物品可以补充数量
+  # 特殊值 '*' 代表上述配置的方块列表
+  list:
+    - '*'
+
 # 物品配置
 item:
   material: PAPER

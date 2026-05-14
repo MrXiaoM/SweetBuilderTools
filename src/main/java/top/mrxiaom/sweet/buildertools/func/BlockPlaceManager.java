@@ -25,6 +25,7 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.Util;
+import top.mrxiaom.sweet.buildertools.Messages;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
@@ -241,6 +242,45 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 e.setCancelled(true);
                 if (GuiManager.inst().getOpeningGui(player) != null) return;
                 plugin.getScheduler().runTask(() -> GuiSelect.create(player, tool, item).open());
+            }
+            if (e.getAction().equals(InventoryAction.SWAP_WITH_CURSOR)) {
+                ItemStack item = e.getCurrentItem();
+                ItemStack cursor = e.getCursor();
+                ToolData data = ToolData.readFrom(item);
+                if (data.isValid()) {
+                    ToolConfig tool = ToolsManager.inst().get(data.id());
+                    if (tool == null || !tool.recoverBySwapEnable()) return;
+                    e.setCancelled(true);
+                    if (tool.isMatchRecoverBySwapList(player, cursor)) {
+                        int reduceAmount = cursor.getAmount();
+                        int amount = data.amount();
+                        if (amount == 0) {
+                            Messages.Item.amount__no_need_to_recover.tm(player);
+                        } else {
+                            int recoverAmount;
+                            if (reduceAmount > amount) {
+                                recoverAmount = amount;
+                                data.amount(0);
+                                cursor.setAmount(reduceAmount - amount);
+                                // noinspection deprecation
+                                e.setCursor(cursor);
+                            } else {
+                                recoverAmount = reduceAmount;
+                                data.amount(amount - reduceAmount);
+                                cursor.setAmount(0);
+                                cursor.setType(Material.AIR);
+                                // noinspection deprecation
+                                e.setCursor(null);
+                            }
+                            data.saveTo(item);
+
+                            ListPair<String, Object> r = new ListPair<>();
+                            tool.addAmountReplacements(r, data.amount());
+                            r.add("%recover_amount%", recoverAmount);
+                            Messages.Item.amount__recover_success.tm(player, r);
+                        }
+                    }
+                }
             }
         }
     }

@@ -51,5 +51,10 @@ public class VanillaItemMaterial extends AbstractModule implements ItemMaterial.
                 return new ItemStack(material, amount);
             }
         }
+
+        @Override
+        public boolean isItemMatch(@NotNull Player player, @NotNull ItemStack item) {
+            return material.equals(item.getType());
+        }
     }
 }

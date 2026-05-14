@@ -1,10 +1,12 @@
 package top.mrxiaom.sweet.buildertools.data;
 
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteItemNBT;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
@@ -15,6 +17,7 @@ import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.Messages;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
+import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -30,6 +33,8 @@ public class ToolConfig {
     private final @NotNull Map<String, BlockMaterial> placeListByKey;
     private final boolean placeUseMaterialByBlock;
     private final @Nullable Integer amount;
+    private final boolean recoverBySwapEnable;
+    private final @NotNull List<ItemMaterial> recoverBySwapList;
     private final @NotNull ToolConfigItem item;
     private final @NotNull List<IAction> eventPlaced;
     private final @NotNull List<IAction> eventNoAmounts;
@@ -73,6 +78,24 @@ public class ToolConfig {
                 throw new IllegalArgumentException("amount 的值无效");
             }
             this.amount = amount;
+        }
+        this.recoverBySwapEnable = config.getBoolean("recover-by-swap.enable");
+        this.recoverBySwapList = new ArrayList<>();
+        boolean recoverBySwapAddedAll = false;
+        for (String str : config.getStringList("recover-by-swap")) {
+            if (str.equals("*")) {
+                if (recoverBySwapAddedAll) continue;
+                recoverBySwapAddedAll = true;
+                for (BlockMaterial material : placeList) {
+                    this.recoverBySwapList.add(material.getItemMaterial());
+                }
+                continue;
+            }
+            ItemMaterial material = plugin.parseItemMaterial(str, true);
+            if (material == null) {
+                throw new IllegalArgumentException("recover-by-swap.list 的值 " + str + " 无效");
+            }
+            this.recoverBySwapList.add(material);
         }
         this.item = ToolConfigItem.load(plugin, config, "item");
         this.eventPlaced = ActionProviders.loadActions(config, "events.placed");
@@ -122,6 +145,25 @@ public class ToolConfig {
 
     public @Nullable Integer amount() {
         return amount;
+    }
+
+    public boolean recoverBySwapEnable() {
+        return recoverBySwapEnable;
+    }
+
+    public @NotNull List<ItemMaterial> recoverBySwapList() {
+        return recoverBySwapList;
+    }
+
+    @Contract("_,null->false")
+    public boolean isMatchRecoverBySwapList(@NotNull Player player, @Nullable ItemStack item) {
+        if (item == null || item.getType().equals(Material.AIR) || item.getAmount() == 0) return false;
+        for (ItemMaterial material : recoverBySwapList()) {
+            if (material.isItemMatch(player, item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public @NotNull ToolConfigItem item() {
