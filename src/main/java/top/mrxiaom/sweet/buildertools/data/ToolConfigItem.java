@@ -176,7 +176,7 @@ public class ToolConfigItem {
         }
         if (glow) ItemStackUtil.setGlow(item);
         if (customModelData != null) ItemStackUtil.setCustomModelData(item, customModelData);
-        if (!nbtStrings.isEmpty() || !nbtInts.isEmpty()) {
+        if (!nbtStrings.isEmpty() || !nbtInts.isEmpty() || extraNBT != null) {
             NBT.modify(item, nbt -> {
                 for (Map.Entry<String, String> entry : nbtStrings.entrySet()) {
                     String value = PAPI.setPlaceholders(player, entry.getValue());
