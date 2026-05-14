@@ -73,6 +73,17 @@ public class ToolData {
         return id != null && unique != null && player != null && current != null;
     }
 
+    @Override
+    public String toString() {
+        return "ToolData{" +
+                "id='" + id + '\'' +
+                ", unique='" + unique + '\'' +
+                ", player='" + player + '\'' +
+                ", current='" + current + '\'' +
+                ", amount=" + amount +
+                '}';
+    }
+
     public void saveTo(@Nullable ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR) || item.getAmount() == 0) return;
         NBT.modify(item, nbt -> {
