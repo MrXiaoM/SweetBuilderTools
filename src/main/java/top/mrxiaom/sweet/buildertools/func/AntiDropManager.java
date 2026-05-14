@@ -50,10 +50,21 @@ public class AntiDropManager extends AbstractModule implements Listener {
         }
     }
 
-    private void removeBlockListFlag(List<Block> blocks) {
-        for (Block block : blocks) {
-            removeFlag(block);
-        }
+    private void onExplode(List<Block> blocks) {
+        blocks.removeIf(block -> {
+            NBTCompound nbt = getNBT(block);
+            if (nbt.hasTag(ToolData.BLOCK_ID)) {
+                if (plugin.debug()) {
+                    info(String.format("阻止了 %s 方块 (%s, %d, %d, %d) 因为爆炸而掉落物品",
+                            nbt.getString(ToolData.BLOCK_ID),
+                            block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+                }
+                nbt.removeKey(ToolData.BLOCK_ID);
+                block.setType(Material.AIR);
+                return true;
+            }
+            return false;
+        });
     }
 
     private void removeFlag(Block block) {
@@ -122,13 +133,13 @@ public class AntiDropManager extends AbstractModule implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onExplode(BlockExplodeEvent event) {
         if (event.isCancelled()) return;
-        removeBlockListFlag(event.blockList());
+        onExplode(event.blockList());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onExplode(EntityExplodeEvent event) {
         if (event.isCancelled()) return;
-        removeBlockListFlag(event.blockList());
+        onExplode(event.blockList());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
