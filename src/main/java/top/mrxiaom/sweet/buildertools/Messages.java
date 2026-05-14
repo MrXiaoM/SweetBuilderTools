@@ -13,7 +13,7 @@ public class Messages {
         public static final Message infinite = field("无限");
         public static final Message unknown_material = field("未指定方块");
         public static final Message amount__no_need_to_recover = field("&e这个工具无需填充可用方块数量");
-        public static final Message amount__recover_success = field("&e已为该工具填充 %recover_amount% 个方块");
+        public static final Message amount__recover_success = field("&a已为该工具填充 %recover_amount% 个方块");
     }
 
     @Language(prefix = "messages.command.")

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.api.IRegistry;
 import top.mrxiaom.pluginbase.data.SimpleRegistry;
+import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.paper.PaperFactory;
 import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
@@ -125,6 +126,15 @@ public class SweetBuilderTools extends BukkitPlugin {
     @Override
     protected void beforeReloadConfig(FileConfiguration config) {
         debug = config.getBoolean("debug", false);
+    }
+
+    @Override
+    protected void beforeEnable() {
+        LanguageManager.inst()
+                .setLangFile("messages.yml")
+                .register(Messages.class)
+                .register(Messages.Item.class)
+                .register(Messages.Command.class);
     }
 
     @Override
