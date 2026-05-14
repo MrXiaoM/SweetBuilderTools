@@ -60,22 +60,15 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         if (e.useItemInHand() == Event.Result.DENY) return;
+        if (e.useInteractedBlock() == Event.Result.DENY) return;
         ItemStack item = e.getItem();
         ToolConfig tool = ToolsManager.inst().get(item);
         if (tool == null) return;
-        Event.Result useInteractedBlock = e.useInteractedBlock();
         if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             e.setCancelled(true);
         }
         if (isOffHand(e)) return;
-        Player player = e.getPlayer();
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (useInteractedBlock == Event.Result.DENY) {
-                if (plugin.debug()) {
-                    player.sendMessage("工具 " + tool.id() + " 交互事件 - 点击方块被取消");
-                }
-                return;
-            }
             rightClick(e, e.getPlayer(), item, tool);
         }
     }
