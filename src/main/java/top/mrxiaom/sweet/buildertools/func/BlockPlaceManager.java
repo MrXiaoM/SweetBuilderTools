@@ -250,8 +250,8 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 if (data.isValid()) {
                     ToolConfig tool = ToolsManager.inst().get(data.id());
                     if (tool == null || !tool.recoverBySwapEnable()) return;
-                    e.setCancelled(true);
                     if (tool.isMatchRecoverBySwapList(player, cursor)) {
+                        e.setCancelled(true);
                         int reduceAmount = cursor.getAmount();
                         int amount = data.amount();
                         if (amount == 0) {
@@ -272,7 +272,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                                 // noinspection deprecation
                                 e.setCursor(null);
                             }
-                            data.saveTo(item);
+                            tool.refreshItem(item, player, data.amount(), data::saveTo);
 
                             ListPair<String, Object> r = new ListPair<>();
                             tool.addAmountReplacements(r, data.amount());

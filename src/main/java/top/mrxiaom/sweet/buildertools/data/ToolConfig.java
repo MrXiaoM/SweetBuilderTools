@@ -82,7 +82,7 @@ public class ToolConfig {
         this.recoverBySwapEnable = config.getBoolean("recover-by-swap.enable");
         this.recoverBySwapList = new ArrayList<>();
         boolean recoverBySwapAddedAll = false;
-        for (String str : config.getStringList("recover-by-swap")) {
+        for (String str : config.getStringList("recover-by-swap.list")) {
             if (str.equals("*")) {
                 if (recoverBySwapAddedAll) continue;
                 recoverBySwapAddedAll = true;
