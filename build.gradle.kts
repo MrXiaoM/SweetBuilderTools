@@ -9,7 +9,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.20")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.21")
 }
 val base = LibraryHelper(project)
 
@@ -38,6 +38,8 @@ dependencies {
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
     base.library(LibraryHelper.adventure("4.22.0"))
+    base.collectPluginHolders()
+
     implementation(base.depend.nbtapi)
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     for (artifact in pluginBaseModules) {
