@@ -31,17 +31,16 @@ public interface BlockMaterial {
 
     /**
      * 在指定位置放置方块
-     * @param player 放置方块的玩家
-     * @param block 方块位置
+     * @param metadata 方块放置行为元数据
      * @return 是否放置成功
      */
-    boolean placeBlock(@NotNull Player player, @NotNull Block block);
+    boolean placeBlock(@NotNull PlaceMetadata metadata);
 
     /**
      * 播放放置方块音效
-     * @param block 方块位置
+     * @param metadata 方块放置行为元数据
      */
-    void placeSound(@NotNull Block block, @NotNull Entity entity);
+    void placeSound(@NotNull PlaceMetadata metadata, @NotNull Entity entity);
 
     interface Provider extends WithPriority {
         @Nullable BlockMaterial parse(@NotNull String str);

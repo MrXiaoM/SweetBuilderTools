@@ -27,6 +27,7 @@ import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.Messages;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
+import top.mrxiaom.sweet.buildertools.api.PlaceMetadata;
 import top.mrxiaom.sweet.buildertools.data.EnumBlockState;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
 import top.mrxiaom.sweet.buildertools.data.ToolData;
@@ -60,6 +61,15 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         }
     }
 
+    @Nullable
+    private Location getInteractionPoint(PlayerInteractEvent e) {
+        try {
+            return e.getInteractionPoint();
+        } catch (LinkageError ignored) {
+            return null;
+        }
+    }
+
     private boolean isUnderSpawnProtection(World world, Player player, Block block) {
         // net.minecraft.server.dedicated.DedicatedServer#isUnderSpawnProtection
         int spawnProtectionRadius = Bukkit.getServer().getSpawnRadius();
@@ -89,7 +99,8 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             ToolConfig tool = ToolsManager.inst().get(data.id());
             if (tool == null || isOffHand(e)) return;
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                rightClick(e, e.getPlayer(), item, tool, data);
+                Location interactionPoint = getInteractionPoint(e);
+                rightClick(e, e.getPlayer(), item, tool, data, interactionPoint);
             }
         }
     }
@@ -128,7 +139,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         return null;
     }
 
-    private void rightClick(PlayerInteractEvent e, Player player, ItemStack item, ToolConfig tool, ToolData data) {
+    private void rightClick(PlayerInteractEvent e, Player player, ItemStack item, ToolConfig tool, ToolData data, Location interactionPoint) {
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock == null) {
             if (plugin.debug()) {
@@ -207,9 +218,11 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
 
         boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
 
+        PlaceMetadata metadata = new PlaceMetadata(player, block, interactionPoint);
+
         // 通过 getState 备份方块快照，然后放置方块
         BlockState previousState = block.getState();
-        if (!material.placeBlock(player, block)) {
+        if (!material.placeBlock(metadata)) {
             if (plugin.debug()) {
                 player.sendMessage("工具 " + tool.id() + " 交互事件 - 放置方块 " + material.key() + " 失败");
             }
@@ -227,7 +240,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             return;
         }
 
-        material.placeSound(block, player);
+        material.placeSound(metadata, player);
 
         int amount = currentAmount + 1;
         tool.setAmount(item, player, amount);

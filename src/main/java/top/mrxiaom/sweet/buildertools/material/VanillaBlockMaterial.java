@@ -1,11 +1,11 @@
 package top.mrxiaom.sweet.buildertools.material;
 
-import org.bukkit.Material;
-import org.bukkit.SoundCategory;
-import org.bukkit.SoundGroup;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +17,7 @@ import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
+import top.mrxiaom.sweet.buildertools.api.PlaceMetadata;
 import top.mrxiaom.sweet.buildertools.func.AbstractModule;
 
 import java.util.StringJoiner;
@@ -93,11 +94,13 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
         }
 
         @Override
-        public boolean placeBlock(@NotNull Player player, @NotNull Block block) {
+        public boolean placeBlock(@NotNull PlaceMetadata metadata) {
+            Block block = metadata.block();
             try {
                 // 1.18+
                 BlockData data = material.createBlockData();
                 if (block.canPlace(data)) {
+                    postPlace(metadata, data);
                     block.setBlockData(data);
                     return true;
                 }
@@ -107,6 +110,7 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
             try {
                 // 1.13+
                 BlockData data = material.createBlockData();
+                postPlace(metadata, data);
                 block.setBlockData(data);
                 return true;
             } catch (LinkageError ignored) {
@@ -116,9 +120,38 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
             return true;
         }
 
+        private void postPlace(PlaceMetadata metadata, BlockData blockData) {
+            if (blockData instanceof Directional) {
+                Location eyeLocation = metadata.player().getEyeLocation();
+                BlockFace blockFacing = getOppositeFacing((eyeLocation.getYaw() + 180.0f) % 360.0f);
+                ((Directional) blockData).setFacing(blockFacing);
+                if (blockData instanceof Bisected) {
+                    Location interactPoint = metadata.interactPoint();
+                    if (interactPoint != null) {
+                        double y = interactPoint.getY() - interactPoint.getBlockY();
+                        Bisected.Half half = y >= 0.5
+                                ? Bisected.Half.TOP
+                                : Bisected.Half.BOTTOM;
+                        ((Bisected) blockData).setHalf(half);
+                    }
+                }
+            }
+        }
+
+        private BlockFace getOppositeFacing(float angle) {
+            // 获取玩家面向方向的反向方向
+            if (angle >= 45) {
+                if (angle < 135) return BlockFace.EAST;
+                if (angle < 225) return BlockFace.SOUTH;
+                if (angle < 315) return BlockFace.WEST;
+            }
+            return BlockFace.NORTH;
+        }
+
         @Override
         @SuppressWarnings("removal")
-        public void placeSound(@NotNull Block block, @NotNull Entity entity) {
+        public void placeSound(@NotNull PlaceMetadata metadata, @NotNull Entity entity) {
+            Block block = metadata.block();
             World world = block.getWorld();
             try {
                 // Paper 1.19+
