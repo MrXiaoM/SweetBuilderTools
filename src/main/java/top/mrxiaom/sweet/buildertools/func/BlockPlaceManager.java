@@ -300,6 +300,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onOpenSelectGui(PlayerSwapHandItemsEvent e) {
         if (!selectBySwapToOffhand || e.isCancelled()) return;
-        openSelectGui(e, e.getPlayer(), e.getOffHandItem());
+        Player player = e.getPlayer();
+        openSelectGui(e, player, player.getInventory().getItemInMainHand());
     }
 }
