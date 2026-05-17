@@ -82,7 +82,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             ToolConfig tool = ToolsManager.inst().get(data.id());
             if (tool == null || isOffHand(e)) return;
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                rightClick(e, e.getPlayer(), item, tool);
+                rightClick(e, e.getPlayer(), item, tool, data);
             }
         }
     }
@@ -120,7 +120,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         return null;
     }
 
-    private void rightClick(PlayerInteractEvent e, Player player, ItemStack item, ToolConfig tool) {
+    private void rightClick(PlayerInteractEvent e, Player player, ItemStack item, ToolConfig tool, ToolData data) {
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock == null) {
             if (plugin.debug()) {
@@ -208,7 +208,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             return;
         }
 
-        BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, previousState, clickedBlock, item, player, canBuild, tool, material);
+        BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, previousState, clickedBlock, item, player, canBuild, tool, data, material);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             if (plugin.debug()) {

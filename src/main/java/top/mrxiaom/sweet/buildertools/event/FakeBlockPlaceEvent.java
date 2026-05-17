@@ -10,23 +10,33 @@ import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.data.ToolConfig;
+import top.mrxiaom.sweet.buildertools.data.ToolData;
 
 public class FakeBlockPlaceEvent extends BlockPlaceEvent {
     private final SweetBuilderTools plugin;
     private final ToolConfig tool;
+    private final ToolData toolData;
     private final BlockMaterial material;
-    public FakeBlockPlaceEvent(SweetBuilderTools plugin, Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild, ToolConfig tool, BlockMaterial material) {
+    public FakeBlockPlaceEvent(SweetBuilderTools plugin, Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild, ToolConfig tool, ToolData toolData, BlockMaterial material) {
         // noinspection deprecation
         super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild);
         this.plugin = plugin;
         this.tool = tool;
+        this.toolData = toolData;
         this.material = material;
     }
 
+    @NotNull
     public ToolConfig tool() {
         return tool;
     }
 
+    @NotNull
+    public ToolData toolData() {
+        return toolData;
+    }
+
+    @NotNull
     public BlockMaterial material() {
         return material;
     }
