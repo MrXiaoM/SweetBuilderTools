@@ -17,3 +17,14 @@ Minecraft 无限建筑方块插件
 总的来说，这是一个重新实现并改进的*魔法方块*功能，可以方便生存服的玩家进行建筑。
 
 > 本插件理论上可以在 1.8+ 运行，但在 Paper 1.16.4+ 的效果最佳，使用 Spigot 或者在 1.16.4 以下会丢失一些特性。
+
+## 命令
+
+插件根命令为 `/sweetbuildertools`，别名 `/sbt`  
+以 `<>` 包裹的为必选参数，以 `[]` 包裹的为可选参数
+
+| 命令 | 描述 | 权限 |
+| --- | --- | --- |
+| `/sbt give <工具ID> [玩家]` | 给予玩家工具物品 | `sweet.buildertools.give` |
+| `/sbt check` | 获取手中工具物品储存的数据，用于测试 | `sweet.buildertools.check` |
+| `/sbt reload` | 重载插件配置文件 | `sweet.buildertools.reload` |
