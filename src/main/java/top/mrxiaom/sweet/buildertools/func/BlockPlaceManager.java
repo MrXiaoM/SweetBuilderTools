@@ -88,7 +88,8 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     }
 
     private final Set<Material> REPLACEABLE = new HashSet<Material>() {{
-        add(Material.GRASS);
+        Material grass = Util.valueOrNull(Material.class, "SHORT_GRASS", "GRASS");
+        if (grass != null) add(grass);
         add(Material.TALL_GRASS);
         add(Material.VINE);
     }};

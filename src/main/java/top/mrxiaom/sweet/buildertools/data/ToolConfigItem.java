@@ -4,7 +4,9 @@ import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteItemNBT;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.gui.IModifier;
@@ -55,6 +57,8 @@ public class ToolConfigItem {
      */
     private final @NotNull Map<String, String> nbtInts;
 
+    private final @NotNull List<ItemFlag> itemFlags;
+
     private final @NotNull ConfigurationSection section;
 
     ToolConfigItem(SweetBuilderTools plugin, ConfigurationSection current) {
@@ -83,6 +87,13 @@ public class ToolConfigItem {
         section = current.getConfigurationSection("nbt-ints");
         if (section != null) for (String key : section.getKeys(false)) {
             nbtInts.put(key, section.getString(key, ""));
+        }
+        this.itemFlags = new ArrayList<>();
+        for (String str : current.getStringList("item-flags")) {
+            ItemFlag itemFlag = Util.valueOrNull(ItemFlag.class, str);
+            if (itemFlag != null) {
+                this.itemFlags.add(itemFlag);
+            }
         }
     }
 
@@ -122,6 +133,11 @@ public class ToolConfigItem {
     @NotNull
     public Map<String, String> nbtInts() {
         return nbtInts;
+    }
+
+    @NotNull
+    public List<ItemFlag> itemFlags() {
+        return itemFlags;
     }
 
     @NotNull
@@ -176,6 +192,13 @@ public class ToolConfigItem {
         }
         if (glow) ItemStackUtil.setGlow(item);
         if (customModelData != null) ItemStackUtil.setCustomModelData(item, customModelData);
+        if (!itemFlags.isEmpty()) {
+            ItemMeta itemMeta = item.getItemMeta();
+            if (itemMeta != null) {
+                itemMeta.addItemFlags(itemFlags.toArray(new ItemFlag[0]));
+                item.setItemMeta(itemMeta);
+            }
+        }
         if (!nbtStrings.isEmpty() || !nbtInts.isEmpty() || extraNBT != null) {
             NBT.modify(item, nbt -> {
                 for (Map.Entry<String, String> entry : nbtStrings.entrySet()) {
