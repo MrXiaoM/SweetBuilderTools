@@ -38,6 +38,8 @@ recover-by-swap:
 item:
   material: PAPER
   display: '&e废石包 - %material%'
+  # 数量更新时，是否更新物品的耐久度，以便展示当前大致用量
+  durability: true
   lore:
     - '&7剩余数量: &f%current_amount% / %max_amount%'
     - ''

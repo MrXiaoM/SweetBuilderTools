@@ -1,10 +1,14 @@
 package top.mrxiaom.sweet.buildertools.data;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteItemNBT;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +40,7 @@ public class ToolConfig {
     private final boolean recoverBySwapEnable;
     private final @NotNull List<ItemMaterial> recoverBySwapList;
     private final @NotNull ToolConfigItem item;
+    private final boolean itemDurability;
     private final @NotNull List<IAction> eventPlaced;
     private final @NotNull List<IAction> eventNoAmounts;
     private final @NotNull List<IAction> eventNoSelected;
@@ -98,6 +103,7 @@ public class ToolConfig {
             this.recoverBySwapList.add(material);
         }
         this.item = ToolConfigItem.load(plugin, config, "item");
+        this.itemDurability = config.getBoolean("item.durability", true);
         this.eventPlaced = ActionProviders.loadActions(config, "events.placed");
         this.eventNoAmounts = ActionProviders.loadActions(config, "events.no-amounts");
         this.eventNoSelected = ActionProviders.loadActions(config, "events.no-selected");
@@ -168,6 +174,10 @@ public class ToolConfig {
 
     public @NotNull ToolConfigItem item() {
         return item;
+    }
+
+    public boolean itemDurability() {
+        return itemDurability;
     }
 
     public @NotNull List<IAction> eventPlaced() {
@@ -271,6 +281,36 @@ public class ToolConfig {
         ListPair<String, Object> r = new ListPair<>();
         addReplacements(r, item, player, amount);
         item().applyItemMeta(item, player, r, r, extraNBT);
+        if (itemDurability()) {
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_20_R4)) {
+                // 1.20.5+ 支持任意物品设置耐久
+                NBT.modifyComponents(item, nbt -> {
+                    Integer maxAmount = amount();
+                    if (maxAmount != null) {
+                        nbt.setInteger("minecraft:max_stack_size", 1);
+                        nbt.setInteger("minecraft:max_damage", maxAmount);
+                        nbt.setInteger("minecraft:damage", amount);
+                    } else {
+                        if (nbt.hasTag("minecraft:max_stack_size")) nbt.removeKey("minecraft:max_stack_size");
+                        if (nbt.hasTag("minecraft:max_damage")) nbt.removeKey("minecraft:max_damage");
+                        if (nbt.hasTag("minecraft:damage")) nbt.removeKey("minecraft:damage");
+                    }
+                });
+            } else {
+                ItemMeta itemMeta = item.getItemMeta();
+                if (itemMeta instanceof Damageable) {
+                    Damageable meta = (Damageable) itemMeta;
+                    Integer maxAmount = amount();
+                    if (maxAmount != null) {
+                        int maxDamage = item.getType().getMaxDurability();
+                        meta.setDamage((int) (((double) amount / maxAmount) * maxDamage));
+                    } else {
+                        meta.setDamage(0);
+                    }
+                    item.setItemMeta(meta);
+                }
+            }
+        }
     }
 
     @NotNull
