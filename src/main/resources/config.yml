@@ -3,3 +3,10 @@ debug: false
 
 tools-folder: './tools'
 gui-folder: './gui'
+
+# 打开选择方块界面的方式
+select-methods:
+  # 物品栏右键点击工具物品
+  inventory-right-click: true
+  # 主手手持工具物品，按主副手交换键 (F)
+  swap-to-offhand: true

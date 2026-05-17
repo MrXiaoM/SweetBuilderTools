@@ -5,18 +5,17 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.*;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
@@ -40,9 +39,17 @@ import java.util.Set;
 @AutoRegister
 public class BlockPlaceManager extends AbstractModule implements Listener {
     private final boolean supportsBoundingBox = Util.isPresent("org.bukkit.util.BoundingBox");
+    private boolean selectByInvRightClick;
+    private boolean selectBySwapToOffhand;
     public BlockPlaceManager(SweetBuilderTools plugin) {
         super(plugin);
         registerEvents();
+    }
+
+    @Override
+    public void reloadConfig(MemoryConfiguration config) {
+        this.selectByInvRightClick = config.getBoolean("select-methods.inventory-right-click", true);
+        this.selectBySwapToOffhand = config.getBoolean("select-methods.swap-to-offhand", true);
     }
 
     private boolean isOffHand(PlayerInteractEvent e) {
@@ -230,19 +237,23 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         tool.eventPlaced(player, r);
     }
 
+    private void openSelectGui(Cancellable e, Player player, ItemStack item) {
+        ToolConfig tool = ToolsManager.inst().get(item);
+        if (tool != null) {
+            e.setCancelled(true);
+            if (GuiManager.inst().getOpeningGui(player) != null) return;
+            plugin.getScheduler().runTask(() -> GuiSelect.create(player, tool, item).open());
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onOpenSelectGui(InventoryClickEvent e) {
         if (e.isCancelled()) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
         if (e.getView().getType().equals(InventoryType.CRAFTING)) {
             Player player = (Player) e.getWhoClicked();
-            if (e.getAction().equals(InventoryAction.PICKUP_HALF)) {
-                ItemStack item = e.getCurrentItem();
-                ToolConfig tool = ToolsManager.inst().get(item);
-                if (tool == null) return;
-                e.setCancelled(true);
-                if (GuiManager.inst().getOpeningGui(player) != null) return;
-                plugin.getScheduler().runTask(() -> GuiSelect.create(player, tool, item).open());
+            if (selectByInvRightClick && e.getAction().equals(InventoryAction.PICKUP_HALF)) {
+                openSelectGui(e, player, e.getCurrentItem());
             }
             if (e.getAction().equals(InventoryAction.SWAP_WITH_CURSOR)) {
                 ItemStack item = e.getCurrentItem();
@@ -284,5 +295,11 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onOpenSelectGui(PlayerSwapHandItemsEvent e) {
+        if (!selectBySwapToOffhand || e.isCancelled()) return;
+        openSelectGui(e, e.getPlayer(), e.getOffHandItem());
     }
 }
