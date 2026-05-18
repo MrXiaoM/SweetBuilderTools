@@ -8,6 +8,7 @@ import net.momirealms.craftengine.bukkit.item.BukkitItemDefinition;
 import net.momirealms.craftengine.bukkit.util.DirectionUtils;
 import net.momirealms.craftengine.bukkit.util.InteractUtils;
 import net.momirealms.craftengine.bukkit.util.LocationUtils;
+import net.momirealms.craftengine.bukkit.world.BukkitExistingBlock;
 import net.momirealms.craftengine.core.block.BlockDefinition;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
 import net.momirealms.craftengine.core.entity.player.InteractionHand;
@@ -121,12 +122,11 @@ public class CraftEngineBlockMaterial extends AbstractModule implements BlockMat
 
         @Override
         public void placeSound(@NotNull PlaceMetadata metadata, @NotNull Entity entity) {
-            Block block = metadata.block();
-            ImmutableBlockState blockState = CraftEngineBlocks.getCustomBlockState(block);
+            BukkitExistingBlock block = BukkitAdaptor.adapt(metadata.block());
+            ImmutableBlockState blockState = block.customBlockState();
             if (blockState != null) {
-                Location location = block.getLocation();
                 SoundData data = blockState.settings().sounds().placeSound();
-                location.getWorld().playSound(entity, data.id().toString(), SoundCategory.BLOCKS, data.volume().get(), data.pitch().get());
+                block.world().playBlockSound(block.position(), data);
             }
         }
     }
