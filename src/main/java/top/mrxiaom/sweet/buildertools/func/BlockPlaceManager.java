@@ -218,7 +218,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
 
         boolean canBuild = !isUnderSpawnProtection(world, player, block) && world.getWorldBorder().isInside(block.getLocation());
 
-        PlaceMetadata metadata = new PlaceMetadata(player, block, interactionPoint);
+        PlaceMetadata metadata = new PlaceMetadata(player, item, block, clickedBlock, e.getBlockFace(), interactionPoint);
 
         // 通过 getState 备份方块快照，然后放置方块
         BlockState previousState = block.getState();

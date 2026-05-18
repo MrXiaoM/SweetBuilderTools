@@ -27,6 +27,7 @@ repositories {
     maven("https://jitpack.io")
     maven("https://repo.rosewooddev.io/repository/public/")
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.momirealms.net/releases")
 }
 
 dependencies {
@@ -36,6 +37,9 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
+
+    compileOnly("net.momirealms:craft-engine-bukkit:26.5")
+    compileOnly("net.momirealms:craft-engine-core:26.5")
 
     base.library(LibraryHelper.adventure("4.22.0"))
     base.collectPluginHolders()
