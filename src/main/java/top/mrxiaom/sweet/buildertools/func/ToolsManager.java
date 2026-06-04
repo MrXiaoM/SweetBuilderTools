@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @AutoRegister
 public class ToolsManager extends AbstractModule {
@@ -35,16 +36,28 @@ public class ToolsManager extends AbstractModule {
             plugin.saveResource("tools/example.yml", new File(folder, "example.yml"));
         }
         tools.clear();
+        AtomicInteger disabledCount = new AtomicInteger(0);
         Util.reloadFolder(folder, false, (rawId, file) -> {
             String id = rawId.replace('\\', '/');
             YamlConfiguration config = ConfigUtils.load(file);
             try {
-                tools.put(id, ToolConfig.load(plugin, id, config));
+                ToolConfig loaded = ToolConfig.load(plugin, id, config);
+                if (loaded.enable()) {
+                    tools.put(id, loaded);
+                } else {
+                    disabledCount.addAndGet(1);
+                }
             } catch (Throwable t) {
                 warn("加载工具配置 " + id + " 时出现错误: " + t.getMessage());
             }
         });
-        info("加载了 " + tools.size() + " 个工具配置");
+        int disabled = disabledCount.get();
+        if (disabled > 0) {
+            int size = tools.size() + disabled;
+            info("加载了 " + size + " 个工具配置，其中 " + disabled + " 个配置已禁用");
+        } else {
+            info("加载了 " + tools.size() + " 个工具配置");
+        }
     }
 
     @NotNull
