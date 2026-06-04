@@ -1,6 +1,5 @@
 package top.mrxiaom.sweet.buildertools.api;
 
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

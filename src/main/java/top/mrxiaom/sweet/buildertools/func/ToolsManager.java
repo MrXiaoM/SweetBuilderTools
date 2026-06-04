@@ -1,8 +1,6 @@
 package top.mrxiaom.sweet.buildertools.func;
 
 import com.google.common.collect.Lists;
-import de.tr7zw.changeme.nbtapi.NBT;
-import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;

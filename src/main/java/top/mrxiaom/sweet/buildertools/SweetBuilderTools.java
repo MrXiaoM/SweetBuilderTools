@@ -2,29 +2,28 @@ package top.mrxiaom.sweet.buildertools;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.api.IRegistry;
 import top.mrxiaom.pluginbase.data.SimpleRegistry;
 import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.paper.PaperFactory;
+import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
+import top.mrxiaom.pluginbase.utils.ClassLoaderWrapper;
+import top.mrxiaom.pluginbase.utils.ConfigUtils;
 import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
-import top.mrxiaom.pluginbase.utils.ClassLoaderWrapper;
-import top.mrxiaom.pluginbase.utils.ConfigUtils;
-import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
-import org.bukkit.configuration.file.YamlConfiguration;
+import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
+import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
+import top.mrxiaom.sweet.buildertools.material.VanillaItemMaterial;
 
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
-import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
-import top.mrxiaom.sweet.buildertools.material.VanillaItemMaterial;
 
 public class SweetBuilderTools extends BukkitPlugin {
     public static SweetBuilderTools getInstance() {

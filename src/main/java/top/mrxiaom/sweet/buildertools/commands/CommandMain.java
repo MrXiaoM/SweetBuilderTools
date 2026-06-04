@@ -21,7 +21,9 @@ import top.mrxiaom.sweet.buildertools.data.ToolData;
 import top.mrxiaom.sweet.buildertools.func.AbstractModule;
 import top.mrxiaom.sweet.buildertools.func.ToolsManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static top.mrxiaom.pluginbase.utils.CollectionUtils.startsWith;
 
