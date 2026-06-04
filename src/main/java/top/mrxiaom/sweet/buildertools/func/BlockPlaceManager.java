@@ -98,6 +98,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             }
             ToolConfig tool = ToolsManager.inst().get(data.id());
             if (tool == null || isOffHand(e)) return;
+            if (!tool.hasPermission(e.getPlayer())) return;
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 Location interactionPoint = getInteractionPoint(e);
                 rightClick(e, e.getPlayer(), item, tool, data, interactionPoint);
