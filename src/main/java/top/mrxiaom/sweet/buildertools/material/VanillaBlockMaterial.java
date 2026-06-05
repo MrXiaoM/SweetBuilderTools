@@ -6,6 +6,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -134,6 +135,17 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
                                 : Bisected.Half.BOTTOM;
                         ((Bisected) blockData).setHalf(half);
                     }
+                }
+            }
+            if (blockData instanceof Slab) {
+                // TODO: 兼容双层台阶
+                Location interactPoint = metadata.interactPoint();
+                if (interactPoint != null) {
+                    double y = interactPoint.getY() - interactPoint.getBlockY();
+                    Slab.Type half = y >= 0.5
+                            ? Slab.Type.TOP
+                            : Slab.Type.BOTTOM;
+                    ((Slab) blockData).setType(half);
                 }
             }
         }
