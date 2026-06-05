@@ -223,8 +223,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
 
         PlaceMetadata metadata = new PlaceMetadata(player, item, block, clickedBlock, e.getBlockFace(), interactionPoint);
 
-        // 通过 getState 备份方块快照，然后放置方块
-        BlockState previousState = block.getState();
+        // 在 PlaceMetada 中已通过 getState() 备份方块快照，在此直接放置方块
         if (!material.placeBlock(metadata)) {
             if (plugin.debug()) {
                 player.sendMessage("工具 " + tool.id() + " 交互事件 - 放置方块 " + material.key() + " 失败");
@@ -232,14 +231,14 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             return;
         }
 
-        BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, previousState, clickedBlock, item, player, canBuild, tool, data, material);
+        BlockPlaceEvent event = new FakeBlockPlaceEvent(plugin, block, metadata.oldBlock(), clickedBlock, item, player, canBuild, tool, data, material);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             if (plugin.debug()) {
                 player.sendMessage("工具 " + tool.id() + " 交互事件 - 其它插件阻止了放置方块");
             }
             // 如果其它插件阻止了方块放置，则恢复原方块
-            previousState.update(true);
+            metadata.oldBlock().update(true);
             return;
         }
 

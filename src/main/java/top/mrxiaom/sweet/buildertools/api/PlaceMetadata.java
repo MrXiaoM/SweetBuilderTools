@@ -3,6 +3,7 @@ package top.mrxiaom.sweet.buildertools.api;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,6 +15,8 @@ public class PlaceMetadata {
     private final @NotNull ItemStack item;
     private final @NotNull Block block;
     private final @NotNull Block clickedBlock;
+    private final @NotNull BlockState oldBlock;
+    private final @NotNull BlockState oldClickedBlock;
     private final @NotNull BlockFace blockFace;
     private final @Nullable Location interactPoint;
     @ApiStatus.Internal
@@ -24,6 +27,8 @@ public class PlaceMetadata {
         this.clickedBlock = clickedBlock;
         this.blockFace = blockFace;
         this.interactPoint = interactPoint;
+        this.oldBlock = block.getState();
+        this.oldClickedBlock = clickedBlock().getState();
     }
 
     public @NotNull Player player() {
@@ -40,6 +45,14 @@ public class PlaceMetadata {
 
     public @NotNull Block clickedBlock() {
         return clickedBlock;
+    }
+
+    public @NotNull BlockState oldBlock() {
+        return oldBlock;
+    }
+
+    public @NotNull BlockState oldClickedBlock() {
+        return oldClickedBlock;
     }
 
     public @NotNull BlockFace blockFace() {
