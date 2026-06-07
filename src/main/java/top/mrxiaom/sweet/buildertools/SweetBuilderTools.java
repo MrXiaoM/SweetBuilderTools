@@ -20,6 +20,7 @@ import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
 import top.mrxiaom.sweet.buildertools.material.VanillaItemMaterial;
+import top.mrxiaom.sweet.buildertools.nms.NMS;
 
 import java.io.File;
 import java.net.URL;
@@ -84,6 +85,7 @@ public class SweetBuilderTools extends BukkitPlugin {
         MinecraftVersion.disableUpdateCheck();
         MinecraftVersion.disableBStats();
         MinecraftVersion.getVersion();
+        NMS.init(getLogger());
     }
 
     private final IRegistry<BlockMaterial.Provider> blockMaterialRegistry = new SimpleRegistry<>();

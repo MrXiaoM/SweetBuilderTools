@@ -20,6 +20,8 @@ import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
 import top.mrxiaom.sweet.buildertools.api.PlaceMetadata;
 import top.mrxiaom.sweet.buildertools.func.AbstractModule;
+import top.mrxiaom.sweet.buildertools.nms.IPlaceBlock;
+import top.mrxiaom.sweet.buildertools.nms.NMS;
 
 import java.util.StringJoiner;
 
@@ -96,7 +98,16 @@ public class VanillaBlockMaterial extends AbstractModule implements BlockMateria
 
         @Override
         public boolean placeBlock(@NotNull PlaceMetadata metadata) {
+            IPlaceBlock placeBlock = NMS.getPlaceBlock();
+            Location interactPoint = metadata.interactPoint();
             Block block = metadata.block();
+            if (placeBlock != null) {
+                return placeBlock.place(
+                        metadata.player(), new ItemStack(material),
+                        interactPoint.getX(), interactPoint.getY(), interactPoint.getZ(),
+                        metadata.blockFace(),
+                        block.getX(), block.getY(), block.getZ(), false);
+            }
             try {
                 // 1.18+
                 BlockData data = material.createBlockData();

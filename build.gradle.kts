@@ -12,12 +12,14 @@ buildscript {
     dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.24")
 }
 val base = LibraryHelper(project)
+extra["base"] = base
 
 group = "top.mrxiaom.sweet.buildertools"
 version = "1.0.1"
 val targetJavaVersion = 8
 val pluginBaseModules = base.modules.run { listOf(library, actions, gui, paper, l10n) }
 val shadowGroup = "top.mrxiaom.sweet.buildertools.libs"
+val shadowLink = configurations.create("shadowLink")
 
 repositories {
     mavenCentral()
@@ -49,6 +51,14 @@ dependencies {
     for (artifact in pluginBaseModules) {
         implementation("$artifact")
     }
+    implementation(project(":nms"))
+    for (module in project.project(":nms").subprojects) {
+        if (module.name == "shared") {
+            implementation(module)
+        } else {
+            add(shadowLink.name, module)
+        }
+    }
     implementation(base.resolver.lite)
 }
 buildConfig {
@@ -65,6 +75,7 @@ LibraryHelper.initPublishing(project)
 
 tasks {
     shadowJar {
+        configurations.add(shadowLink)
         configurations.add(project.configurations.runtimeClasspath.get())
         mapOf(
             "top.mrxiaom.pluginbase" to "base",
