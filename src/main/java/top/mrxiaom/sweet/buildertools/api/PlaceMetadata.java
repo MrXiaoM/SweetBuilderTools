@@ -18,9 +18,9 @@ public class PlaceMetadata {
     private final @NotNull BlockState oldBlock;
     private final @NotNull BlockState oldClickedBlock;
     private final @NotNull BlockFace blockFace;
-    private final @Nullable Location interactPoint;
+    private final @NotNull Location interactPoint;
     @ApiStatus.Internal
-    public PlaceMetadata(@NotNull Player player, @NotNull ItemStack item, @NotNull Block block, @NotNull Block clickedBlock, @NotNull BlockFace blockFace, @Nullable Location interactPoint) {
+    public PlaceMetadata(@NotNull Player player, @NotNull ItemStack item, @NotNull Block block, @NotNull Block clickedBlock, @NotNull BlockFace blockFace, @NotNull Location interactPoint) {
         this.player = player;
         this.item = item;
         this.block = block;
@@ -59,7 +59,7 @@ public class PlaceMetadata {
         return blockFace;
     }
 
-    public @Nullable Location interactPoint() {
+    public @NotNull Location interactPoint() {
         return interactPoint;
     }
 }

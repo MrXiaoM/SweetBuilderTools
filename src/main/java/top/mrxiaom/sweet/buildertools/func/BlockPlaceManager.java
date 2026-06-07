@@ -9,6 +9,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
@@ -21,6 +22,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.func.GuiManager;
@@ -68,7 +70,13 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         try {
             return e.getInteractionPoint();
         } catch (LinkageError ignored) {
-            return null;
+            Player player = e.getPlayer();
+            RayTraceResult result = player.rayTraceBlocks(4.5);
+            if (result == null) return null;
+            double x = result.getHitPosition().getX();
+            double y = result.getHitPosition().getY();
+            double z = result.getHitPosition().getZ();
+            return new Location(player.getWorld(), x, y, z);
         }
     }
 
@@ -150,6 +158,12 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             }
             return;
         }
+        if (interactionPoint == null) {
+            if (plugin.debug()) {
+                player.sendMessage("工具 " + tool.id() + " 交互事件 - 无法获取点击位置");
+            }
+            return;
+        }
         if (!player.isSneaking()) {
             // 非潜行状态下需要考虑点击的方块是否可以右键交互的问题
             BlockState state = clickedBlock.getState();
@@ -176,6 +190,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             int blockZ = block.getZ();
             BoundingBox blockBox = new BoundingBox(blockX, blockY, blockZ, blockX + 1, blockY + 1, blockZ + 1);
             for (Entity entity : world.getEntities()) {
+                if (entity.getType().equals(EntityType.DROPPED_ITEM)) continue;
                 if (entity.getBoundingBox().overlaps(blockBox)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
@@ -186,6 +201,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         } else {
             // 1.14 以下检查坐标
             for (Entity entity : world.getEntities()) {
+                if (entity.getType().equals(EntityType.DROPPED_ITEM)) continue;
                 if (entity.getLocation().getBlock().equals(block)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
