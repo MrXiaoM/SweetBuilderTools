@@ -1,5 +1,6 @@
 package top.mrxiaom.sweet.buildertools.func;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTPersistentDataContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -8,12 +9,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.sweet.buildertools.SweetBuilderTools;
@@ -78,6 +82,48 @@ public class AntiDropManager extends AbstractModule implements Listener {
                         block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
             }
             nbt.removeKey(ToolData.BLOCK_ID);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockFalling(EntitySpawnEvent event) {
+        if (event.isCancelled()) return;
+        Entity entity = event.getEntity();
+        Block block = event.getLocation().getBlock();
+        if (entity instanceof FallingBlock) {
+            NBTCompound nbt = getNBT(block);
+            if (nbt.hasTag(ToolData.BLOCK_ID)) {
+                if (plugin.debug()) {
+                    info(String.format("因为方块坠落，移除了 %s 方块 (%s, %d, %d, %d)",
+                            nbt.getString(ToolData.BLOCK_ID),
+                            block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+                }
+                String toolId = nbt.getString(ToolData.BLOCK_ID);
+                nbt.removeKey(ToolData.BLOCK_ID);
+                NBT.modify(entity, entityNbt -> {
+                    entityNbt.setString(ToolData.BLOCK_ID, toolId);
+                });
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockFallen(EntityChangeBlockEvent event) {
+        if (event.isCancelled()) return;
+        Block block = event.getBlock();
+        Entity entity = event.getEntity();
+        if (entity instanceof FallingBlock) {
+            String toolId = NBT.get(entity, nbt -> {
+                if (nbt.hasTag(ToolData.BLOCK_ID)) {
+                    return nbt.getString(ToolData.BLOCK_ID);
+                } else {
+                    return "";
+                }
+            });
+            if (toolId != null) {
+                NBTCompound nbt = getNBT(block);
+                nbt.setString(ToolData.BLOCK_ID, toolId);
+            }
         }
     }
 
