@@ -15,7 +15,7 @@ val base = LibraryHelper(project)
 extra["base"] = base
 
 group = "top.mrxiaom.sweet.buildertools"
-version = "1.0.1"
+version = "1.0.2"
 val targetJavaVersion = 8
 val pluginBaseModules = base.modules.run { listOf(library, actions, gui, paper, l10n) }
 val shadowGroup = "top.mrxiaom.sweet.buildertools.libs"
