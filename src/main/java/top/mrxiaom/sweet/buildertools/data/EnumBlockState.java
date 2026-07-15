@@ -5,7 +5,7 @@ import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.function.Predicate;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "removal"})
 public enum EnumBlockState {
     Banner(state -> state instanceof Banner, false),
     Barrel(state -> state instanceof Barrel, true),

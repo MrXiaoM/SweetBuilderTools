@@ -18,7 +18,7 @@ public class FakeBlockPlaceEvent extends BlockPlaceEvent {
     private final ToolData toolData;
     private final BlockMaterial material;
     public FakeBlockPlaceEvent(SweetBuilderTools plugin, Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild, ToolConfig tool, ToolData toolData, BlockMaterial material) {
-        // noinspection deprecation
+        // noinspection deprecation, removal, UnstableApiUsage
         super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild);
         this.plugin = plugin;
         this.tool = tool;

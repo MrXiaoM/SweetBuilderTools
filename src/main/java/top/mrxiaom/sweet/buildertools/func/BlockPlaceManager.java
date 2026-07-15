@@ -190,7 +190,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             int blockZ = block.getZ();
             BoundingBox blockBox = new BoundingBox(blockX, blockY, blockZ, blockX + 1, blockY + 1, blockZ + 1);
             for (Entity entity : world.getEntities()) {
-                if (entity.getType().equals(EntityType.DROPPED_ITEM)) continue;
+                if (entity.getType().name().equals("DROPPED_ITEM")) continue;
                 if (entity.getBoundingBox().overlaps(blockBox)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
@@ -201,7 +201,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         } else {
             // 1.14 以下检查坐标
             for (Entity entity : world.getEntities()) {
-                if (entity.getType().equals(EntityType.DROPPED_ITEM)) continue;
+                if (entity.getType().name().equals("DROPPED_ITEM")) continue;
                 if (entity.getLocation().getBlock().equals(block)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
