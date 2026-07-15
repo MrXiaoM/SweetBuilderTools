@@ -4,12 +4,14 @@ import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTPersistentDataContainer;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import org.bukkit.ExplosionResult;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -178,15 +180,35 @@ public class AntiDropManager extends AbstractModule implements Listener {
         }
     }
 
+    private boolean shouldKeepBlocks(BlockExplodeEvent event) {
+        try {
+            //noinspection UnstableApiUsage
+            return event.getExplosionResult() == ExplosionResult.KEEP;
+        } catch (LinkageError ignored) {
+            return false;
+        }
+    }
+
+    private boolean shouldKeepBlocks(EntityExplodeEvent event) {
+        try {
+            //noinspection UnstableApiUsage
+            return event.getExplosionResult() == ExplosionResult.KEEP;
+        } catch (LinkageError ignored) {
+            return false;
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onExplode(BlockExplodeEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || shouldKeepBlocks(event)) return;
         onExplode(event.blockList());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onExplode(EntityExplodeEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled() || shouldKeepBlocks(event)) return;
+        EntityType type = event.getEntityType();
+        if (type.name().contains("WIND_CHARGE")) return;
         onExplode(event.blockList());
     }
 
