@@ -189,13 +189,18 @@ public class AntiDropManager extends AbstractModule implements Listener {
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private boolean shouldKeepBlocks(EntityExplodeEvent event) {
         try {
-            //noinspection UnstableApiUsage
-            return event.getExplosionResult() == ExplosionResult.KEEP;
+            if (event.getExplosionResult() == ExplosionResult.KEEP) {
+                return true;
+            }
+            if (event.getExplosionResult() == ExplosionResult.TRIGGER_BLOCK) {
+                return true;
+            }
         } catch (LinkageError ignored) {
-            return false;
         }
+        return false;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
