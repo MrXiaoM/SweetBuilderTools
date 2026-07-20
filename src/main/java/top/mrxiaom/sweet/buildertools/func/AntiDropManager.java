@@ -201,7 +201,11 @@ public class AntiDropManager extends AbstractModule implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onExplode(BlockExplodeEvent event) {
         if (event.isCancelled() || shouldKeepBlocks(event)) return;
-        onExplode(event.blockList());
+        BlockState state = event.getExplodedBlockState();
+        String type = state.getType().name().toUpperCase();
+        if (type.contains("BED") || type.equals("RESPAWN_ANCHOR")) {
+            onExplode(event.blockList());
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
