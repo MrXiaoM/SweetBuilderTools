@@ -26,25 +26,53 @@ public class NMS {
                 }
                 break;
             case MC1_21_R6:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R6.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_21_9.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R6.PlaceBlock();
+                }
                 break;
             case MC1_21_R5:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R5.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_21_8.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R5.PlaceBlock();
+                }
                 break;
             case MC1_21_R4:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R4.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_21_5.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R4.PlaceBlock();
+                }
                 break;
             case MC1_21_R3:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R3.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_21_4.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R3.PlaceBlock();
+                }
                 break;
             case MC1_21_R2:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R2.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_21_3.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R2.PlaceBlock();
+                }
                 break;
             case MC1_21_R1:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R1.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_21.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_21_R1.PlaceBlock();
+                }
                 break;
             case MC1_20_R4:
-                placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_20_R4.PlaceBlock();
+                try {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_1_20_6.PlaceBlock();
+                } catch (LinkageError ignored) {
+                    placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_20_R4.PlaceBlock();
+                }
                 break;
             case MC1_20_R3:
                 placeBlock = new top.mrxiaom.sweet.buildertools.nms.v1_20_R3.PlaceBlock();
