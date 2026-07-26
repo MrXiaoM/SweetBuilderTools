@@ -15,6 +15,9 @@ public class NMS {
         MinecraftVersion ver = MinecraftVersion.getVersion();
         switch (ver) {
             case UNKNOWN:
+            case MC26_2:
+                placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_26_2.PlaceBlock();
+                break;
             case MC26_1:
                 placeBlock = new top.mrxiaom.sweet.buildertools.nms.mojmap_26_1.PlaceBlock();
                 break;
