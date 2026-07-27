@@ -9,7 +9,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
@@ -281,7 +280,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
     public void onOpenSelectGui(InventoryClickEvent e) {
         if (e.isCancelled()) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
-        if (e.getView().getType().equals(InventoryType.CRAFTING)) {
+        if (Util.getView(e).getType().equals(InventoryType.CRAFTING)) {
             Player player = (Player) e.getWhoClicked();
             if (selectByInvRightClick && e.getAction().equals(InventoryAction.PICKUP_HALF)) {
                 openSelectGui(e, player, e.getCurrentItem());
