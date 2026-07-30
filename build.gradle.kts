@@ -15,7 +15,7 @@ val base = LibraryHelper(project)
 extra["base"] = base
 
 group = "top.mrxiaom.sweet.buildertools"
-version = "1.0.2"
+version = "1.0.3"
 val targetJavaVersion = 8
 val pluginBaseModules = base.modules.run { listOf(library, actions, gui, paper, l10n) }
 val shadowGroup = "top.mrxiaom.sweet.buildertools.libs"
@@ -46,7 +46,7 @@ dependencies {
     base.library(LibraryHelper.adventure("4.25.0"))
     base.collectPluginHolders()
 
-    implementation("de.tr7zw:item-nbt-api:2.15.8-SNAPSHOT")
+    implementation("de.tr7zw:item-nbt-api:2.16.0")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     for (artifact in pluginBaseModules) {
         implementation("$artifact")

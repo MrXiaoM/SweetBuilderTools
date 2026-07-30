@@ -39,7 +39,7 @@ subprojects {
 dependencies {
     compileOnly(base.modules.actions)
     compileOnly(base.depend.annotations)
-    compileOnly("de.tr7zw:item-nbt-api:2.15.8-SNAPSHOT")
+    compileOnly("de.tr7zw:item-nbt-api:2.16.0")
     for (module in subprojects) {
         compileOnly(module)
     }
