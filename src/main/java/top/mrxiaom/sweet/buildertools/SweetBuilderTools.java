@@ -16,7 +16,6 @@ import top.mrxiaom.pluginbase.utils.ClassLoaderWrapper;
 import top.mrxiaom.pluginbase.utils.ConfigUtils;
 import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
-import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 import top.mrxiaom.sweet.buildertools.api.BlockMaterial;
 import top.mrxiaom.sweet.buildertools.api.ItemMaterial;
 import top.mrxiaom.sweet.buildertools.material.VanillaItemMaterial;
@@ -38,7 +37,6 @@ public class SweetBuilderTools extends BukkitPlugin {
                 .reconnectDatabaseWhenReloadConfig(false)
                 .scanIgnore("top.mrxiaom.sweet.buildertools.libs")
         );
-        this.scheduler = new FoliaLibScheduler(this);
 
         try {
             //noinspection ResultOfMethodCallIgnored, deprecation
