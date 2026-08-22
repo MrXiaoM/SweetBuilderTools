@@ -9,7 +9,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.33")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.8.0")
 }
 val base = LibraryHelper(project)
 extra["base"] = base
@@ -17,7 +17,7 @@ extra["base"] = base
 group = "top.mrxiaom.sweet.buildertools"
 version = "1.0.3"
 val targetJavaVersion = 8
-val pluginBaseModules = base.modules.run { listOf(library, actions, gui, paper, l10n, misc) }
+val pluginBaseModules = base.modules.run { listOf(library, message, actions, gui, paper, l10n, misc) }
 val shadowGroup = "top.mrxiaom.sweet.buildertools.libs"
 val shadowLink = configurations.create("shadowLink")
 
