@@ -37,11 +37,11 @@ dependencies {
     // compileOnly("org.spigotmc:spigot:1.20") // NMS
     compileOnly(base.depend.annotations)
 
-    compileOnly("me.clip:placeholderapi:2.12.2")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
-    compileOnly("net.momirealms:craft-engine-bukkit:26.5")
-    compileOnly("net.momirealms:craft-engine-core:26.5")
+    compileOnly("net.momirealms:craft-engine-bukkit:26.8.1")
+    compileOnly("net.momirealms:craft-engine-core:26.8.1")
 
     base.library(LibraryHelper.adventure("4.25.0"))
     base.collectPluginHolders()
