@@ -43,10 +43,13 @@ import java.util.Set;
 @AutoRegister
 public class BlockPlaceManager extends AbstractModule implements Listener {
     private final boolean supportsBoundingBox = Util.isPresent("org.bukkit.util.BoundingBox");
+    private final Set<String> ignoreEntityTypes = new HashSet<>();
     private boolean selectByInvRightClick;
     private boolean selectBySwapToOffhand;
     public BlockPlaceManager(SweetBuilderTools plugin) {
         super(plugin);
+        ignoreEntityTypes.add("DROPPED_ITEM");
+        ignoreEntityTypes.add("ITEM");
         registerEvents();
     }
 
@@ -189,7 +192,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
             int blockZ = block.getZ();
             BoundingBox blockBox = new BoundingBox(blockX, blockY, blockZ, blockX + 1, blockY + 1, blockZ + 1);
             for (Entity entity : world.getEntities()) {
-                if (entity.getType().name().equals("DROPPED_ITEM")) continue;
+                if (ignoreEntityTypes.contains(entity.getType().name())) continue;
                 if (entity.getBoundingBox().overlaps(blockBox)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
@@ -200,7 +203,7 @@ public class BlockPlaceManager extends AbstractModule implements Listener {
         } else {
             // 1.14 以下检查坐标
             for (Entity entity : world.getEntities()) {
-                if (entity.getType().name().equals("DROPPED_ITEM")) continue;
+                if (ignoreEntityTypes.contains(entity.getType().name())) continue;
                 if (entity.getLocation().getBlock().equals(block)) {
                     if (plugin.debug()) {
                         player.sendMessage("工具 " + tool.id() + " 交互事件 - 试图放置方块到与实体重叠的位置");
