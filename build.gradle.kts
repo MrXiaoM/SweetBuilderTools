@@ -52,6 +52,7 @@ dependencies {
     }
     implementation(project(":nms"))
     for (module in project.project(":nms").subprojects) {
+        if (module.name.contains("stub")) continue
         if (module.name == "shared") {
             implementation(module)
         } else {

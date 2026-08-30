@@ -11,9 +11,10 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_21_R5.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_21_R5.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.sweet.buildertools.nms.IPlaceBlock;
@@ -22,6 +23,7 @@ public class PlaceBlock implements IPlaceBlock {
     public PlaceBlock() {
         //noinspection ResultOfMethodCallIgnored
         convert(BlockFace.UP);
+        CraftItemStack.asNMSCopy(new ItemStack(Material.STONE));
     }
     private static Direction convert(BlockFace blockFace) {
         return switch (blockFace) {
